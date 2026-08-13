@@ -21,9 +21,10 @@ public class SerializableDic<TKey, TValue> :
     [Serializable]
     private struct SerializableKeyValuePair
     {
-        [SerializeReference] public TKey Key;
-        [SerializeReference] public TValue Value;
-
+        // [SerializeReference] public TKey Key;
+        // [SerializeReference] public TValue Value;
+        [SerializeField] public TKey Key;
+        [SerializeField] public TValue Value;
 
         public SerializableKeyValuePair(TKey key, TValue value)
         {

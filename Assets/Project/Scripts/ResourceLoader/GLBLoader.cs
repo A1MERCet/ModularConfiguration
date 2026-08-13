@@ -19,6 +19,9 @@ public class GLBLoader: SingletonMono<GLBLoader>
     public void OnLoaded(GameObject obj)
     {
         this.loadedGLTF = obj;
+        foreach (var c in UtilUnity.GetChildren(obj.transform))
+            if (c.name == "flashModel") 
+                c.gameObject.SetActive(false);
 
         texturePBR.onLoaded = () => {
             //todo
@@ -51,6 +54,7 @@ public class GLBLoader: SingletonMono<GLBLoader>
             }
         };
         texturePBR.LoadAsync();
+        
     }
     
     public async void Load(string path, string fileName, Action<GameObject> onLoaded = null)

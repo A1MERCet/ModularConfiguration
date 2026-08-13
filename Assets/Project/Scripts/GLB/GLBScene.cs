@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,13 +7,13 @@ public class GLBScene : MonoBehaviour
     private Transform _gltfRoot;
     private Animation _animation;
     
-    private List<MeshRenderer> _meshRenderers = new();
-    private List<SkinnedMeshRenderer> _skinnedMeshRenderers = new();
+    private Dictionary<string, MeshRenderer> _meshRenderers = new();
+    private Dictionary<string, SkinnedMeshRenderer> _skinnedMeshRenderers = new();
 
     public Transform GLTFRoot => _gltfRoot;
     public Animation Animation => _animation;
-    public List<MeshRenderer> MeshRenderers => _meshRenderers;
-    public List<SkinnedMeshRenderer> SkinnedMeshRenderers => _skinnedMeshRenderers;
+    public Dictionary<string, MeshRenderer> MeshRenderers => _meshRenderers;
+    public Dictionary<string, SkinnedMeshRenderer> SkinnedMeshRenderers => _skinnedMeshRenderers;
     
     public void SetGLTF(Transform gltfRoot)
     {
@@ -29,9 +30,9 @@ public class GLBScene : MonoBehaviour
         if (_gltfRoot) {
             _animation = _gltfRoot.GetComponent<Animation>();
             foreach (var mesh in _gltfRoot.GetComponentsInChildren<MeshRenderer>())
-                _meshRenderers.Add(mesh);
+                _meshRenderers.Add(mesh.name, mesh);
             foreach (var mesh in _gltfRoot.GetComponentsInChildren<SkinnedMeshRenderer>())
-                _skinnedMeshRenderers.Add(mesh);
+                _skinnedMeshRenderers.Add(mesh.name, mesh);
         }
     }
     

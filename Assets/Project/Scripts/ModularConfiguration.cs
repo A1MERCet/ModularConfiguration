@@ -1,9 +1,9 @@
-using UnityEngine;
-
 public class ModularConfiguration : SingletonMono<ModularConfiguration>
 {
     public GLBAnimationPlayer glbPlayer;
     public UIGLBPlayer uiGLBPlayer;
+
+    public MWFProperty mwfProperty = new MWFProperty();
     
     void Start()
     {

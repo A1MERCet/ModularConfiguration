@@ -1,14 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UIGLBPlayer : MonoBehaviour
 {
     private GLBAnimationPlayer _player;
-
+    
     public GLBAnimationPlayer Player => _player;
+
+    private UIGLBPlayerTimeline _timeline;
     
     public RectTransform rectProgress;
-    public RectTransform rectMarkContent;
+    
     public Text textFrame;
     public Text textMaxFrame;
     public Button buttonPlay;
@@ -18,10 +21,43 @@ public class UIGLBPlayer : MonoBehaviour
     
     public void SetPlayer(GLBAnimationPlayer player)
     {
-        this._player = player;
+        if (_player) _player.onSetBehaviourMWFGun -= OnSetBehaviourMWFGun;
+        _player = player;
+        if (_player) _player.onSetBehaviourMWFGun += OnSetBehaviourMWFGun;
     }
+
+    private void OnSetBehaviourMWFGun(BehaviourMWFGun behaviour)
+    {
+        _timeline.SetMaxFrame(_player?.MaxFrame ?? 0);
+        UpdateTimelineMarks();
+    }
+
+    private void UpdateTimelineMarks()
+    {
+        if (_player)
+        {
+            List<UIGLBPlayerTimeline.Mark> marks = new();
+            foreach (var (k, v) in _player.GetAnimaStates())
+                marks.Add(new UIGLBPlayerTimeline.Mark() {
+                    id = k,
+                    name = $"{ModularConfiguration.instance.mwfProperty.GetLang($"anima.{v.name}")}\n{v.name}",
+                    start = v.startTime,
+                    end = v.endTime,
+                    color = ModularConfiguration.instance.mwfProperty.GetAnimaStageColor(v.name)
+                });
+            _timeline.SetMarks(marks);
+        }
+    }
+
+    private void Awake()
+    {
+        _timeline = GetComponentInChildren<UIGLBPlayerTimeline>();
+        _timeline.parent = this;
+    }
+
     void Start()
     {
+        
     }
 
     void Update()
@@ -42,6 +78,11 @@ public class UIGLBPlayer : MonoBehaviour
     
     }
 
+    public void UpdateAnimaStageMarks()
+    {
+        
+    }
+    
     private void FixedUpdate()
     {
         UpdateProgress();
@@ -59,7 +100,7 @@ public class UIGLBPlayer : MonoBehaviour
             return;
         }
         var maxSizeX = rectProgress.parent.GetComponent<RectTransform>().rect.width;
-        rectProgress.sizeDelta = new Vector2(maxSizeX * _player.Progress, rectProgress.sizeDelta.y);
+        rectProgress.sizeDelta = new Vector2(_timeline.showFrame == 0F ? 0 : maxSizeX * Mathf.Clamp(_player.CurrentFrame / _timeline.showFrame, 0F, 1F), rectProgress.sizeDelta.y);
     }
 
     public void ActionPlay()
