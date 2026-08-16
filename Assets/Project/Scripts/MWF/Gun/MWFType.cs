@@ -1,24 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-public abstract class MWFType
+[JsonObject(MemberSerialization.OptIn)]
+public abstract class MWFType: MWFConfig
 {
-    public string path;
-    private JObject jsonObject;
-    public JObject JsonObject => jsonObject;
-
-    public string internalName;
-    public string displayName;
-    
-    public void ParseJsonObject(JObject jsonObject)
-    {
-        this.jsonObject = jsonObject;
-        OnParseJsonObject(jsonObject);
-    }
-
-    protected virtual void OnParseJsonObject(JObject jsonObject)
-    {
-        
-    }
-    
-    public abstract string GetRenderType();
 }

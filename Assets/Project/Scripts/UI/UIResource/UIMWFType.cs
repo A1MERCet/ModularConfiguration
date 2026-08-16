@@ -24,7 +24,7 @@ public class UIMWFType<T> : MonoBehaviour where T : MWFType
 
     protected virtual void Update()
     {
-        textID.text = mwfType?.internalName ?? "";
-        textName.text = mwfType?.displayName ?? "";
+        textID.text = mwfType?.InternalName ?? "";
+        textName.text = mwfType?.DisplayName ?? "";
     }
 }

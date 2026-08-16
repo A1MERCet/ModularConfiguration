@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TexturePBRLoader: SingletonMono<TexturePBRLoader>
 {
-    public async void LoadAsync(TexutrePBR pbr)
+    public async void LoadAsync(TexturePBR pbr)
     {
         if (!File.Exists(pbr.baseColorPath)) return;
 

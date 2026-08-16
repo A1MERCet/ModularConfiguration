@@ -19,6 +19,7 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
     private readonly List<Mark> marks = new List<Mark>();
     public List<Mark> Marks => marks;
     public RectTransform rect;
+    public RectTransform rectContent;
     public RectTransform rectMarkContent;
 
     public float process;
@@ -41,8 +42,12 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
     void Update()
     {
         if (Input.mouseScrollDelta.y != 0) {
-            showFrame = Mathf.Clamp(showFrame + (showFrame * -Input.mouseScrollDelta.y * 0.1F), 100F, maxFrame * 2F);
-            UpdateMarkInstances();
+            if (Input.GetKey(KeyCode.LeftControl)) {
+                showFrame = Mathf.Clamp(showFrame + (showFrame * -Input.mouseScrollDelta.y * 0.1F), 100F, maxFrame * 2F);
+                UpdateMarkInstances();
+            }else {
+                rectContent.anchoredPosition = new Vector2(rectContent.anchoredPosition.x + Input.mouseScrollDelta.y * showFrame * 0.1F, rectContent.anchoredPosition.y);
+            }
         }
     }
     
@@ -87,14 +92,36 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
         marks.ForEach(e => AddMark(e));
     }
 
+    // public UIAnimaStageMark CreateMark(Mark m)
+    // {
+    //     float width = rectMarkContent.rect.size.x * (showFrame <= 0 ? 0 : Mathf.Clamp(Math.Abs(m.end - m.start) / showFrame, 0F, 1F));
+    //     float x = rectMarkContent.rect.size.x * (showFrame <= 0 ? 0 : (m.start / showFrame));
+    //     var animaStageMark = Instantiate(ResourceManager.instance.ui.RESOURCE_ANIMA_STAGE_MARK.gameObject, rectMarkContent.transform).GetComponent<UIAnimaStageMark>();
+    //     var animaStageRect = animaStageMark.GetComponent<RectTransform>();
+    //     animaStageRect.sizeDelta = new Vector2(width, animaStageRect.sizeDelta.y);
+    //     animaStageRect.localPosition = new Vector3(x - rectMarkContent.rect.size.x / 2F, 0F, 0F);
+    //     animaStageMark.name = m.id;
+    //     animaStageMark.text.text = m.name;
+    //     animaStageMark.color = ModularConfiguration.instance.mwfProperty.GetAnimaStageColor(m.id);
+    //     animaStageMark.SetColorDefault();
+    //     return animaStageMark;
+    // }
+    
     public UIAnimaStageMark CreateMark(Mark m)
     {
-        float width = rectMarkContent.rect.size.x * (showFrame <= 0 ? 0 : Mathf.Clamp(Math.Abs(m.end - m.start) / showFrame, 0F, 1F));
-        float x = rectMarkContent.rect.size.x * (showFrame <= 0 ? 0 : (m.start / showFrame));
+        float containerWidth = rectMarkContent.rect.size.x;
+        float width = containerWidth * (showFrame <= 0 ? 0 : Mathf.Clamp(Mathf.Abs(m.end - m.start) / showFrame, 0F, 1F));
+        float x = containerWidth * (showFrame <= 0 ? 0 : (m.start / showFrame));
+    
         var animaStageMark = Instantiate(ResourceManager.instance.ui.RESOURCE_ANIMA_STAGE_MARK.gameObject, rectMarkContent.transform).GetComponent<UIAnimaStageMark>();
         var animaStageRect = animaStageMark.GetComponent<RectTransform>();
+    
+        animaStageRect.anchorMin = new Vector2(0, 0);
+        animaStageRect.anchorMax = new Vector2(0, 1);
+        animaStageRect.pivot = new Vector2(0, 0.5f);
+        animaStageRect.anchoredPosition = new Vector2(x, 0);
         animaStageRect.sizeDelta = new Vector2(width, animaStageRect.sizeDelta.y);
-        animaStageRect.localPosition = new Vector3(x - rectMarkContent.rect.size.x / 2F, 0F, 0F);
+    
         animaStageMark.name = m.id;
         animaStageMark.text.text = m.name;
         animaStageMark.color = ModularConfiguration.instance.mwfProperty.GetAnimaStageColor(m.id);

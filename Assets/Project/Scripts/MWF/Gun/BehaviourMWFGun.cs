@@ -1,48 +1,38 @@
 ﻿using System;
 using UnityEngine;
 
-public class BehaviourMWFGun: MonoBehaviour
+public class BehaviourMWFGun: BehaviourMWF
 {
     private MWFTypeGun type;
-    private MWFRenderGun render;
-    private GLBScene glbScene;
 
-    public MWFTypeGun Type => type;
-    public MWFRenderGun Render => render;
-    public GLBScene GLBScene => glbScene;
+    public MWFTypeGun TypeGun => type;
+    public MWFRenderGun RenderGun => type.renderGun;
 
     private bool aiming = false;
 
 
-    private void Update()
+    protected override void Update()
     {
+        base.Update();
         if (Input.GetMouseButtonDown(1)) aiming = !aiming;
     }
     
-    private void FixedUpdate()
+    protected override  void FixedUpdate()
     {
-        if (render != null && glbScene != null)
+        base.FixedUpdate();
+        if (RenderGun != null && GLBScene != null)
         {
-            var targetPosition = (render.translateHipPosition() + render.globalTranslate());
-            if (aiming) targetPosition += render.translateAimPosition();
-            
-            var targetRotation = render.rotateHipPosition() + render.globalRotate() ;
-            // glbScene.transform.localScale = render.globalScale() * render.modelScale();
-            glbScene.transform.position = new Vector3(targetPosition.z, targetPosition.y, targetPosition.x) * 0.01F + new Vector3(0,2,0);
-            glbScene.transform.rotation = Quaternion.identity;
-            glbScene.transform.Rotate(Vector3.up, 90F);
-            // glbScene.transform.rotation = Quaternion.Euler(targetRotation+ new Vector3(0,90,0));
+            var targetPosition = (RenderGun.translateHipPosition + RenderGun.globalTranslate);
+            if (aiming) targetPosition += RenderGun.translateAimPosition;
+            GLBScene.transform.position = new Vector3(targetPosition.z, targetPosition.y, targetPosition.x) * 0.01F + new Vector3(0,2,0);
+            GLBScene.transform.rotation = Quaternion.identity;
+            GLBScene.transform.Rotate(Vector3.up, 90F);
         }
     }
     
-    public void SetConfig(MWFTypeGun type, MWFRenderGun render)
+    public virtual void SetConfig(MWFType type, GLBScene glbScene)
     {
-        this.type = type;
-        this.render = render;
-    }
-
-    public void SetGLBScene(GLBScene glbScene)
-    {
-        this.glbScene = glbScene;
+        base.SetConfig(type, glbScene);
+        this.type = type as MWFTypeGun;
     }
 }

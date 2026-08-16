@@ -4,38 +4,71 @@ using System.IO;
 
 public class MWFPackage
 {
+    public LoggerProxy logger = new LoggerProxy("MWF包管理器");
+    
     public string name;
     public string path;
     public string assetsPath;
+    public string skinPath;
+    public string iconPath;
     public string glbPath;
     
-    private List<MWFType> types = new();
-    private List<MWFRender> renders = new();
-    
-    public List<MWFType> Types => types;
-    public List<MWFRender> Renders => renders;
+    private SerializableDic<string, MWFConfig> configs = new();
+    public SerializableDic<string, MWFConfig> Configs => configs;
 
-    public T GetMWFType<T>(string id) where T : MWFType
+    public T GetConfig<T>(string id) where T : MWFConfig
     {
-        foreach (MWFType t in types)
-            if (t.internalName == id && t.GetType() == typeof(T))
-                return t as T;
+        foreach (MWFConfig r in configs.Values)
+            if (r.GetType() == typeof(T) && r.InternalName == id)
+                return (T)r;
         return null;
     }
     
-    public T GetMWFRender<T>(string id) where T : MWFRender
+    public MWFConfig GetConfig(string id)
     {
-        foreach (MWFRender r in renders)
-            if (r.internalName == id && r.GetType() == typeof(T))
-                return r as T;
+        foreach (MWFConfig r in configs.Values)
+            if (r.InternalName == id)
+                return r;
+        return null;
+    }
+    
+    public List<T> GetList<T>() where T : MWFConfig
+    {
+        List<T> list = new();
+        foreach (MWFConfig r in configs.Values)
+            if (r.GetType() == typeof(T))
+                list.Add(r as T);
+        return list;
+    }
+
+    public T RemoveMWFRender<T>(string id) where T : MWFConfig
+    {
+        var cfg = configs[id];
+        if (cfg.GetType() == typeof(T))
+        {
+            var c = cfg as T;
+            configs.Remove(id);
+            return c;
+        }
+        return null;
+    }
+    
+    public MWFConfig RemoveMWFRender(string id)
+    {
+        var cfg = configs[id];
+        if (cfg != null)
+        {
+            configs.Remove(id);
+            return cfg;
+        }
         return null;
     }
 
-    public void LoadGLB(MWFRender render, Action<GLBScene> onLoaded = null)
+    public void AddConfig(MWFConfig config)
     {
-        GLBSceneManager.instance.Load(Path.Combine(glbPath, render.GetRenderType()), render.modelFileName, (s) => {
-            render.loadedGLBScene = s;
-            onLoaded?.Invoke(s);
-        });
+        if (config == null){logger.Error("添加Config失败 - Config为null");return;}
+        if (config.InternalName == null){logger.Error("添加Config失败 - InternalName为空");return;}
+        if (configs.ContainsKey(config.InternalName)){logger.Error($"添加Config({config.InternalName})失败 - 重复的InternalName");return;}
+        configs.Add(config.InternalName, config);
     }
 }

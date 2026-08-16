@@ -1,26 +1,20 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using System;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-public abstract class MWFRender
+[JsonObject(MemberSerialization.OptIn)]
+public abstract class MWFRender: MWFConfig
 {
-    public string path;
-    private JObject jsonObject;
-    public JObject JsonObject => jsonObject;
-    
-    public string internalName;
-    public string modelFileName;
+    [JsonProperty] private string modelFileName;
+    public string ModelFileName
+    {
+        get => modelFileName;
+        set {
+            modelFileName = value;
+            OnPropertyChanged("modelFileName", value);
+        }
+    }
 
     public GLBScene loadedGLBScene;
-
-    public void ParseJsonObject(JObject jsonObject)
-    {
-        this.jsonObject = jsonObject;
-        OnParseJsonObject(jsonObject);
-    }
-
-    protected virtual void OnParseJsonObject(JObject jsonObject)
-    {
-    }
-
-    public abstract string GetRenderType();
 }

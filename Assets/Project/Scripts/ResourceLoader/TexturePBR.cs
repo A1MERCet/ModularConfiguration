@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public class TexutrePBR
+public class TexturePBR
 {
     public string baseColorPath;
     public Texture2D baseColor;

@@ -92,15 +92,36 @@ public class UIGLBPlayer : MonoBehaviour
         buttonResume.gameObject.SetActive(_player?.Paused ?? false);
     }
 
+    // void UpdateProgress()
+    // {
+    //     if (!rectProgress || !_player)
+    //     {
+    //         rectProgress.sizeDelta = new Vector2(0, rectProgress.sizeDelta.y);
+    //         return;
+    //     }
+    //     var maxSizeX = rectProgress.parent.GetComponent<RectTransform>().rect.width;
+    //     rectProgress.sizeDelta = new Vector2(_timeline.showFrame == 0F ? 0 : maxSizeX * Mathf.Clamp(_player.CurrentFrame / _timeline.showFrame, 0F, 1F), rectProgress.sizeDelta.y);
+    // }
+    
     void UpdateProgress()
     {
-        if (!rectProgress || !_player)
+        if (!rectProgress || !_player || !_timeline)
         {
-            rectProgress.sizeDelta = new Vector2(0, rectProgress.sizeDelta.y);
+            if (rectProgress) rectProgress.sizeDelta = new Vector2(0, rectProgress.sizeDelta.y);
             return;
         }
-        var maxSizeX = rectProgress.parent.GetComponent<RectTransform>().rect.width;
-        rectProgress.sizeDelta = new Vector2(_timeline.showFrame == 0F ? 0 : maxSizeX * Mathf.Clamp(_player.CurrentFrame / _timeline.showFrame, 0F, 1F), rectProgress.sizeDelta.y);
+        
+        float containerWidth = _timeline.rectMarkContent.rect.size.x;
+        if (rectProgress.pivot.x != 0)
+        {
+            rectProgress.pivot = new Vector2(0, 0.5F);
+            rectProgress.anchorMin = new Vector2(0, 0);
+            rectProgress.anchorMax = new Vector2(0, 1);
+            rectProgress.anchoredPosition = new Vector2(0, rectProgress.anchoredPosition.y);
+        }
+
+        float progressWidth = _timeline.showFrame <= 0F ? 0 : containerWidth * Mathf.Clamp(_player.CurrentFrame / _timeline.showFrame, 0F, 1F);
+        rectProgress.sizeDelta = new Vector2(progressWidth, rectProgress.sizeDelta.y);
     }
 
     public void ActionPlay()

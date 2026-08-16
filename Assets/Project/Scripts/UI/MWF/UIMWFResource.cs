@@ -1,5 +1,3 @@
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIMWFResource : SingletonMono<UIMWFResource>
@@ -24,24 +22,13 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
         {
             case "guns":
             {
-                foreach (var type in mwfPackage.Types)
+                foreach (var type in mwfPackage.Configs.Values)
                     if (type is MWFTypeGun typeGun)
                     {
                         var clone = Instantiate(ResourceManager.instance.ui.RESOURCE_TYPE_GUN.gameObject, content);
                         var item = clone.GetComponent<UIMWFTypeGun>();
                         item.SetType(typeGun);
-                        item.onClick += () => {
-                            MainThread.instance.Enqueue(() => {
-                                var render = mwfPackage.GetMWFRender<MWFRenderGun>(typeGun.internalName);
-                                GLBSceneManager.instance.ClearGLBScenes();
-                                GLBSceneManager.instance.Load(Path.Combine(mwfPackage.glbPath, "guns"), render.modelFileName, (scene) => {
-                                    var behaviour = scene.AddComponent<BehaviourMWFGun>();
-                                    behaviour.SetConfig(typeGun, render);
-                                    behaviour.SetGLBScene(scene);
-                                    ModularConfiguration.instance.glbPlayer.SetBehaviourMWFGun(behaviour);
-                                });
-                            });
-                        };
+                        item.onClick += () => ModularConfiguration.instance.SetEditConfig(typeGun);
                     }
 
                 break;

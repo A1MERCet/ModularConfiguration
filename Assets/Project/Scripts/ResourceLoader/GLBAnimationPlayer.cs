@@ -41,7 +41,7 @@ public class GLBAnimationPlayer: MonoBehaviour
         Debug.Log($"[GLBAnimaPlayer] 设置BehaviourMWFGun: {BehaviourMWFGun?.name ?? "null"}");
     }
 
-    public Dictionary<string, AnimationStage> GetAnimaStates() => BehaviourMWFGun?.Render?.Animations ?? new Dictionary<string, AnimationStage>();
+    public Dictionary<string, AnimationStage> GetAnimaStates() => BehaviourMWFGun?.RenderGun?.Animations ?? new Dictionary<string, AnimationStage>();
     
     private void Update()
     {
@@ -111,6 +111,7 @@ public class GLBAnimationPlayer: MonoBehaviour
     private void ResetAnimation()
     {
         if (Animation) {
+            var fps = _behaviourMWFGun.RenderGun.FPS;
             logger.Info($"开始播放GLB动画: {BehaviourMWFGun?.name ?? "null"}");
             int layer = 0;
             foreach (AnimationState state in Animation) {
@@ -120,9 +121,9 @@ public class GLBAnimationPlayer: MonoBehaviour
                 state.clip.wrapMode = WrapMode.Once;
                 state.wrapMode = WrapMode.Once;
                 Animation.Play(state.name);
-                _maxTime = Math.Max(state.length, _maxTime);
-                _maxFrame = (int)Math.Max(state.clip.frameRate * state.clip.length, _maxFrame);
-                logger.Info($"        Clip: {state.name} FR: {state.clip.frameRate} L: {state.clip.length}");
+                _maxFrame = (int)Math.Max(fps * state.clip.length, _maxFrame);
+                _maxTime = Math.Max(state.clip.length, _maxTime);
+                logger.Info($"        Clip: {state.name} TF: {fps * state.clip.length} FR: {fps}/{state.clip.frameRate} L: {state.clip.length}");
             }
             logger.Info($"时长: {_maxTime}s 最大帧: ${_maxFrame}");
         }

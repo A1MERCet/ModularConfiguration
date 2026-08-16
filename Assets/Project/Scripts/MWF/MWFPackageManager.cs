@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
         MWFPackage package = new MWFPackage() {
             name = Path.GetFileName(path),
             path = path,
+            skinPath = Path.Combine(path, "assets", "modularwarfare", "skins"),
+            iconPath = Path.Combine(path, "assets", "modularwarfare", "textures", "items"),
             assetsPath = Path.Combine(path, "assets", "modularwarfare"),
             glbPath = Path.Combine(path, "assets", "modularwarfare", "gltf"),
         };
@@ -29,10 +32,11 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
             int count = 0;
             foreach (var file in ListFiles(pathGuns))
             {
-                var type = JsonUtility.FromJson<MWFTypeGun>(file.content);
+                var type = JsonConvert.DeserializeObject<MWFTypeGun>(file.content);
+                type.package = package;
                 type.ParseJsonObject(JObject.Parse(file.content));
                 type.path = file.path;
-                package.Types.Add(type);
+                package.AddConfig(type);
                 count++;
             }
             logger.Info($"    加载TypeGun*{count}");
@@ -41,11 +45,14 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
             int count = 0;
             foreach (var file in ListFiles(pathGunRenders))
             {
-                var render = JsonUtility.FromJson<MWFRenderGun>(file.content);
+                var render = JsonConvert.DeserializeObject<MWFRenderGun>(file.content);
+                render.package = package;
                 render.ParseJsonObject(JObject.Parse(file.content));
                 render.path = file.path;
-                render.internalName = file.name.Replace(".render.json", "");
-                package.Renders.Add(render);
+                render.InternalName = file.name.Replace(".render.json", "");
+                var type = package.GetConfig<MWFTypeGun>(render.InternalName);
+                if (type != null) type.renderGun = render;
+                else              logger.Warn($"没有找到renderID为 {render.InternalName} 的Type 是否有同ID其他类型的配置文件: {package.GetConfig(render.InternalName) == null}");
                 count++;
             }
             logger.Info($"    加载RenderGun*{count}");
