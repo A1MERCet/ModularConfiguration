@@ -56,7 +56,7 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
             MWFConfig cfg = null;
             if (input.isType) cfg = type;
             else if (input.isRender) cfg = ConfigRender;
-            if (cfg != null) input.SetValue(cfg.JsonObject?.Get(input.propertyPath)); 
+            if (cfg != null) input.SetValue(cfg.JsonObject.Get(input.propertyPath)); 
         }
 
         if (ConfigRender != null) ConfigRender.onPropertyChanged += OnRenderPropertyValueChanged;
