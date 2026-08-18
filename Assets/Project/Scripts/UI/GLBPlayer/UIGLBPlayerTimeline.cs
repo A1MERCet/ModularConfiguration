@@ -54,7 +54,7 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
     private void UpdateMarkInstances()
     {
         ClearMarkInstances();
-        marks.ForEach(e=>CreateMark(e));
+        marks.ForEach(e => CreateMark(e));
     }
 
     private void ClearMarkInstances()

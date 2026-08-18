@@ -1,4 +1,7 @@
+using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIMWFResource : SingletonMono<UIMWFResource>
 {
@@ -29,8 +32,8 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
                         var item = clone.GetComponent<UIMWFTypeGun>();
                         item.SetType(typeGun);
                         item.onClick += () => ModularConfiguration.instance.SetEditConfig(typeGun);
+                        LoadIcon(item.icon, Path.Combine(type.package.iconPath, "guns", $"{type.InternalName}.png"));
                     }
-
                 break;
             }
         }
@@ -42,5 +45,25 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
             Destroy(t.gameObject);
     }
     
+    public async void LoadIcon(RawImage raw, string path)
+    {
+        
+        if (!File.Exists(path)) {
+            raw.texture = null;
+            raw.color = Color.clear;
+            return;
+        }
+        byte[] fileData = await File.ReadAllBytesAsync(path);
+        await Task.Yield(); 
+        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        if (texture.LoadImage(fileData)) {
+            raw.texture = texture;
+            raw.color = Color.white;
+        }else {
+            raw.texture = null;
+            raw.color = Color.clear;
+            Destroy(texture);
+        }
+    }
     
 }

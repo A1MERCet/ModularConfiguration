@@ -1,4 +1,4 @@
-﻿public struct AnimationStage
+﻿public struct GLBAnimationStage
 {
     public string name;
     public int startTime;

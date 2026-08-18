@@ -1,4 +1,7 @@
 ﻿public enum MWFConfigType
 {
-    RENDER, TYPE
+    GUN,
+    ATTACHMENT,
+    ARMOR,
+    TEXTURE,
 }

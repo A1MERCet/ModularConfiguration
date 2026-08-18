@@ -7,8 +7,9 @@
 ---
 
 ## 依赖
-- Unity 6000.0.65F1
-- [XKenixs/GLBUtility](https://github.com/XKenixs/GLBUtility)
+- Unity 6000.0.65F1 / URP
+- [KhronosGroup/UnityGLTF](https://github.com/KhronosGroup/UnityGLTF)
+- [PhalanxHead/UnityRuntimeOBJLoader](https://assetstore.unity.com/packages/package/49547)
 - [mob-sakai/UIEffect](https://github.com/mob-sakai/UIEffect)
 - [Runtime File Browser](https://assetstore.unity.com/packages/p/runtime-file-browser-113006)
 - [Runtime Inspector & Hierarchy](https://assetstore.unity.com/packages/tools/gui/runtime-inspector-hierarchy-111349)

@@ -6,7 +6,7 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
 {
     public LoggerProxy logger = new LoggerProxy("MWF配置界面");
     public MWFTypeGun type;
-    public MWFRenderGun Render => type?.renderGun;
+    public MWFRenderGun ConfigRender => type?.configRender as MWFRenderGun;
 
     
     [Header("不需要修改 runtime自动创建")]
@@ -36,8 +36,9 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
       
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
         ClearEventHandler();
         foreach (var input in properties.Values)
             input.onValueChanged.RemoveListener(OnInputValueChanged);
@@ -45,7 +46,7 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
 
     private void ClearEventHandler()
     {
-        if (Render != null) Render.onPropertyChanged -= OnRenderPropertyValueChanged;
+        if (ConfigRender != null) ConfigRender.onPropertyChanged -= OnRenderPropertyValueChanged;
         if (type != null) type.onPropertyChanged -= OnTypePropertyValueChanged;
     }
     private void InitEventHandler()
@@ -53,32 +54,21 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
         foreach (GUIInput input in GetComponentsInChildren<GUIInput>())
         {
             MWFConfig cfg = null;
-            switch (input.configType)
-            {
-                case MWFConfigType.TYPE: cfg = type; break;
-                case MWFConfigType.RENDER: cfg = Render; break;
-            }
+            if (input.isType) cfg = type;
+            else if (input.isRender) cfg = ConfigRender;
             if (cfg != null) input.SetValue(cfg.JsonObject?.Get(input.propertyPath)); 
         }
 
-        if (Render != null) Render.onPropertyChanged += OnRenderPropertyValueChanged;
+        if (ConfigRender != null) ConfigRender.onPropertyChanged += OnRenderPropertyValueChanged;
         if (type != null) type.onPropertyChanged += OnTypePropertyValueChanged;
     }
     private void OnInputValueChanged(GUIInput input, object value)
     {
         logger.Info($"输入更新 {input.propertyPath}: {value ?? "null"}({value?.GetType().Name ?? "null"})");
-        switch (input.configType)
-        {
-            case MWFConfigType.TYPE:
-            {
-                type.JsonObject.Set(input.propertyPath, value);
-                type.OnPropertyChanged(input.propertyPath, value);
-                break;
-            } case MWFConfigType.RENDER: {
-                Render.JsonObject.Set(input.propertyPath, value);
-                Render.OnPropertyChanged(input.propertyPath, value);
-                break;
-            }
+        if (input.isType) {
+            type.SetValue(input.propertyPath, value);
+        } else if (input.isRender) {
+            ConfigRender.SetValue(input.propertyPath, value);
         }
     }
 

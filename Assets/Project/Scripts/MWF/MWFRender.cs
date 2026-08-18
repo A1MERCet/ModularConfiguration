@@ -1,20 +1,20 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 [JsonObject(MemberSerialization.OptIn)]
+[Serializable]
 public abstract class MWFRender: MWFConfig
 {
+    public MWFTypeRender configType;
+    public ModelRenderer.RenderParameters renderParams;
+    
     [JsonProperty] private string modelFileName;
     public string ModelFileName
     {
         get => modelFileName;
-        set {
-            modelFileName = value;
-            OnPropertyChanged("modelFileName", value);
-        }
+        set => SetValue("modelFileName", value);
     }
 
-    public GLBScene loadedGLBScene;
+    public abstract BehaviourMWF LoadedModel();
 }

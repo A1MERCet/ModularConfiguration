@@ -24,7 +24,7 @@ public class GLBLoader: SingletonMono<GLBLoader>
     
     public async void Load(string path, string fileName, Action<GameObject> onLoaded = null)
     {
-        Debug.Log($"加载GLB {fileName}");
+        // Debug.Log($"加载GLB {fileName}");
         _gltf.GLTFUri = path;
         var opts = new ImportOptions();
         opts.AnimationMethod = AnimationMethod.Legacy;

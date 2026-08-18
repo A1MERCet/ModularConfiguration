@@ -8,6 +8,7 @@ public class UIMWFType<T> : MonoBehaviour where T : MWFType
 
     public Text textID;
     public Text textName;
+    public RawImage icon;
     public Button button;
     public Action onClick;
 

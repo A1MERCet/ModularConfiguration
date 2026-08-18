@@ -23,11 +23,20 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
             iconPath = Path.Combine(path, "assets", "modularwarfare", "textures", "items"),
             assetsPath = Path.Combine(path, "assets", "modularwarfare"),
             glbPath = Path.Combine(path, "assets", "modularwarfare", "gltf"),
+            objPath = Path.Combine(path, "assets", "modularwarfare", "obj"),
         };
 
+        var pathTextures = Path.Combine(path, "textures");
+        
+        var pathArmors = Path.Combine(path, "armor");
+        var pathArmorRenders = Path.Combine(path, "armor", "render");
+        
         var pathGuns = Path.Combine(path, "guns");
         var pathGunRenders = Path.Combine(path, "guns", "render");
 
+        var pathAtts = Path.Combine(path, "attachments");
+        var pathAttRenders = Path.Combine(path, "attachments", "render");
+        
         if (Directory.Exists(pathGuns)) {
             int count = 0;
             foreach (var file in ListFiles(pathGuns))
@@ -51,13 +60,80 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
                 render.path = file.path;
                 render.InternalName = file.name.Replace(".render.json", "");
                 var type = package.GetConfig<MWFTypeGun>(render.InternalName);
-                if (type != null) type.renderGun = render;
-                else              logger.Warn($"没有找到renderID为 {render.InternalName} 的Type 是否有同ID其他类型的配置文件: {package.GetConfig(render.InternalName) == null}");
+                if (type != null) {
+                    type.configRender = render;
+                    render.configType = type;
+                }else { logger.Warn($"没有找到renderID为 {render.InternalName} 的Type 是否有同ID其他类型的配置文件: {package.GetConfig(render.InternalName) == null}"); }
                 count++;
             }
             logger.Info($"    加载RenderGun*{count}");
         }
+        
+        if (Directory.Exists(pathAtts)) {
+            int count = 0;
+            foreach (var file in ListFiles(pathAtts))
+            {
+                var type = JsonConvert.DeserializeObject<MWFTypeAtt>(file.content);
+                type.package = package;
+                type.ParseJsonObject(JObject.Parse(file.content));
+                type.path = file.path;
+                package.AddConfig(type);
+                count++;
+            }
+            logger.Info($"    加载TypeAtt*{count}");
+        }
+        if (Directory.Exists(pathAttRenders)) {
+            int count = 0;
+            foreach (var file in ListFiles(pathAttRenders))
+            {
+                var render = JsonConvert.DeserializeObject<MWFRenderAtt>(file.content);
+                render.package = package;
+                render.ParseJsonObject(JObject.Parse(file.content));
+                render.path = file.path;
+                render.InternalName = file.name.Replace(".render.json", "");
+                var type = package.GetConfig<MWFTypeAtt>(render.InternalName);
+                if (type != null) {
+                    type.configRender = render;
+                    render.configType = type;
+                }else { logger.Warn($"没有找到renderID为 {render.InternalName} 的Type 是否有同ID其他类型的配置文件: {package.GetConfig(render.InternalName) == null}"); }
 
+                count++;
+            }
+            logger.Info($"    加载RenderAtt*{count}");
+        }
+        
+        if (Directory.Exists(pathArmors)) {
+            int count = 0;
+            foreach (var file in ListFiles(pathArmors))
+            {
+                var type = JsonConvert.DeserializeObject<MWFTypeArmor>(file.content);
+                type.package = package;
+                type.ParseJsonObject(JObject.Parse(file.content));
+                type.path = file.path;
+                package.AddConfig(type);
+                count++;
+            }
+            logger.Info($"    加载TypeArmor*{count}");
+        }
+        if (Directory.Exists(pathArmorRenders)) {
+            int count = 0;
+            foreach (var file in ListFiles(pathArmorRenders))
+            {
+                var render = JsonConvert.DeserializeObject<MWFRenderArmor>(file.content);
+                render.package = package;
+                render.ParseJsonObject(JObject.Parse(file.content));
+                render.path = file.path;
+                render.InternalName = file.name.Replace(".render.json", "");
+                var type = package.GetConfig<MWFTypeArmor>(render.InternalName);
+                if (type != null) {
+                    type.configRender = render;
+                    render.configType = type;
+                }else { logger.Warn($"没有找到renderID为 {render.InternalName} 的Type 是否有同ID其他类型的配置文件: {package.GetConfig(render.InternalName) == null}"); }
+
+                count++;
+            }
+            logger.Info($"    加载RenderArmor*{count}");
+        }
         packages.Add(package);
         return package;
     }

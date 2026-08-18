@@ -26,9 +26,7 @@ public class GLBAnimationPlayer: MonoBehaviour
 
     private BehaviourMWFGun _behaviourMWFGun;
     public BehaviourMWFGun BehaviourMWFGun => (_behaviourMWFGun == null || _behaviourMWFGun.IsDestroyed()) ? null : _behaviourMWFGun;
-    
-    public GLBScene GLBScene => (_behaviourMWFGun == null || _behaviourMWFGun.IsDestroyed()) ? null : ((_behaviourMWFGun.GLBScene == null || _behaviourMWFGun.GLBScene.IsDestroyed()) ? null : _behaviourMWFGun.GLBScene);
-    public Animation Animation => (GLBScene?.Animation == null || GLBScene.Animation.IsDestroyed()) ? null : GLBScene.Animation;
+    public Animation Animation => BehaviourMWFGun?.Animation;
 
     public Action<BehaviourMWFGun> onSetBehaviourMWFGun;
     
@@ -41,7 +39,7 @@ public class GLBAnimationPlayer: MonoBehaviour
         Debug.Log($"[GLBAnimaPlayer] 设置BehaviourMWFGun: {BehaviourMWFGun?.name ?? "null"}");
     }
 
-    public Dictionary<string, AnimationStage> GetAnimaStates() => BehaviourMWFGun?.RenderGun?.Animations ?? new Dictionary<string, AnimationStage>();
+    public Dictionary<string, GLBAnimationStage> GetAnimaStates() => BehaviourMWFGun?.ConfigRender?.Animations ?? new Dictionary<string, GLBAnimationStage>();
     
     private void Update()
     {
@@ -104,14 +102,14 @@ public class GLBAnimationPlayer: MonoBehaviour
         _playing = true;
         _time = 0F;
         ResetAnimation();
-        Animation?.Play();
+        if (Animation) Animation.Play();
     }
 
 
     private void ResetAnimation()
     {
         if (Animation) {
-            var fps = _behaviourMWFGun.RenderGun.FPS;
+            var fps = _behaviourMWFGun.ConfigRender.FPS;
             logger.Info($"开始播放GLB动画: {BehaviourMWFGun?.name ?? "null"}");
             int layer = 0;
             foreach (AnimationState state in Animation) {
@@ -123,9 +121,9 @@ public class GLBAnimationPlayer: MonoBehaviour
                 Animation.Play(state.name);
                 _maxFrame = (int)Math.Max(fps * state.clip.length, _maxFrame);
                 _maxTime = Math.Max(state.clip.length, _maxTime);
-                logger.Info($"        Clip: {state.name} TF: {fps * state.clip.length} FR: {fps}/{state.clip.frameRate} L: {state.clip.length}");
+                // logger.Info($"        Clip: {state.name} TF: {fps * state.clip.length} FR: {fps}/{state.clip.frameRate} L: {state.clip.length}");
             }
-            logger.Info($"时长: {_maxTime}s 最大帧: ${_maxFrame}");
+            logger.Info($"时长: {_maxTime}s 最大帧: {_maxFrame}");
         }
     }
 }

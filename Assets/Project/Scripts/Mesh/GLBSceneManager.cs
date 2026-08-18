@@ -23,7 +23,7 @@ public class GLBSceneManager : SingletonMono<GLBSceneManager>
             var glbScene = glbSceneObj.AddComponent<GLBScene>();
             glbScene.SetGLTF(obj.transform);
             
-            Debug.Log($"加载纹理 {fileName}");
+            // Debug.Log($"加载纹理 {fileName}");
             texture.onLoaded = () => {
                 foreach (var mesh in obj.GetComponentsInChildren<MeshRenderer>())
                 {

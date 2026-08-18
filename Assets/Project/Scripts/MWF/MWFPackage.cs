@@ -11,6 +11,7 @@ public class MWFPackage
     public string assetsPath;
     public string skinPath;
     public string iconPath;
+    public string objPath;
     public string glbPath;
     
     private SerializableDic<string, MWFConfig> configs = new();

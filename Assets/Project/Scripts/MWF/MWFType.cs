@@ -1,8 +1,12 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 [JsonObject(MemberSerialization.OptIn)]
+[Serializable]
 public abstract class MWFType: MWFConfig
 {
+    public Action<Texture2D> onIconLoaded;
 }

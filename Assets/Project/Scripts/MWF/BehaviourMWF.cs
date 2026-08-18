@@ -2,11 +2,12 @@
 
 public class BehaviourMWF: MonoBehaviour
 {
-    private MWFType type;
-    public MWFType Type => type;
+    private MWFType config;
+    public MWFType Config => config;
     
-    private GLBScene glbScene;
-    public GLBScene GLBScene => glbScene;
+    public GameObject model;
+    public Animation _animation;
+    public Animation Animation => _animation;
 
     protected virtual void Awake()
     {
@@ -28,9 +29,10 @@ public class BehaviourMWF: MonoBehaviour
         
     }
     
-    public virtual void SetConfig(MWFType type, GLBScene glbScene)
+    public virtual void SetConfig(MWFType type, GameObject model)
     {
-        this.type = type;
-        this.glbScene = glbScene;
+        this.config = type;
+        this.model = model;
+        _animation = this.model?.GetComponentInChildren<Animation>();
     }
 }

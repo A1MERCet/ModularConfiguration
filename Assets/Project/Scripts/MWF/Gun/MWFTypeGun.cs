@@ -1,8 +1,11 @@
+using System;
 using Newtonsoft.Json;
 
 [JsonObject(MemberSerialization.OptIn)]
-public class MWFTypeGun: MWFType
+[Serializable]
+public class MWFTypeGun: MWFTypeGLB
 {
+    public MWFRenderGLB RenderGun => configRender as MWFRenderGLB;
+    
     public override string GetConfigType() => "guns";
-    public MWFRenderGun renderGun;
 }

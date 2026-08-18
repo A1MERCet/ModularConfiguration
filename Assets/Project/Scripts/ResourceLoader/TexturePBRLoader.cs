@@ -13,11 +13,8 @@ public class TexturePBRLoader: SingletonMono<TexturePBRLoader>
         await Task.Yield(); 
         Texture2D texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
         
-        if (texture.LoadImage(fileData)) {
-            pbr.baseColor = texture;
-        }else {
-            Destroy(texture);
-        }
+        if (texture.LoadImage(fileData)) pbr.baseColor = texture;
+        else                             Destroy(texture);
         pbr.onLoaded?.Invoke();
     }
 }

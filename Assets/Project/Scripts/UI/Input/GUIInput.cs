@@ -18,7 +18,8 @@ public class GUIInput : MonoBehaviour
         VECTOR2,
     }
     
-    public MWFConfigType configType;
+    public bool isType;
+    public bool isRender;
     public string propertyPath;
     
     public Type type = Type.FLOAT;
@@ -59,28 +60,24 @@ public class GUIInput : MonoBehaviour
             case Type.INTEGER: {
                 int.TryParse(input1.text, out int value);
                 return value;
-                break;}
-            case Type.FLOAT: {
+            } case Type.FLOAT: {
                 float.TryParse(input1.text, out float value);
                 return value;
-                break;}
-            case Type.VECTOR2: {
+            } case Type.VECTOR2: {
                 float.TryParse(input1.text, out float x);
                 float.TryParse(input2.text, out float y);
                 return new Vector2(x, y);
-                break;}
-            case Type.VECTOR3: {
+            } case Type.VECTOR3: {
                 float.TryParse(input1.text, out float x);
                 float.TryParse(input2.text, out float y);
                 float.TryParse(input3.text, out float z);
                 return new Vector3(x, y, z);
-            break;}
-            case Type.BOOLEAN: {
+            } case Type.BOOLEAN: {
                 return toggle.isOn;
             }
             case Type.STRING: {
-                return input1.text;
-            break;}
+                return input1.text; 
+            }
         }
         return input1.text;
     }
