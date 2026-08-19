@@ -9,6 +9,7 @@ public class UIGLBPlayer : MonoBehaviour
     public GLBAnimationPlayer Player => _player;
 
     private UIGLBPlayerTimeline _timeline;
+    public UIGLBPlayerTimeline Timeline => _timeline;
     
     public RectTransform rectProgress;
     
@@ -47,6 +48,8 @@ public class UIGLBPlayer : MonoBehaviour
                     color = ModularConfiguration.instance.mwfProperty.GetAnimaStageColor(v.name)
                 });
             _timeline.SetMarks(marks);
+        }else {
+            _timeline.ClearMarks();
         }
     }
 
@@ -69,9 +72,14 @@ public class UIGLBPlayer : MonoBehaviour
         if (_player)
         {
             if (Input.GetKeyDown(KeyCode.Space)) {
-                if (!_player.Playing) _player.Play();
-                else if (_player.Paused) _player.Resume();
-                else _player.Pause();
+                if (!_player.Playing) {
+                    _player.Play();
+                    _player.Resume();
+                }else if (_player.Paused) {
+                    _player.Resume();
+                }else {
+                    _player.Pause();
+                }
             } else if (Input.GetKeyDown(KeyCode.Backspace)) {
                 if (_player.Playing) _player.Stop();
             }

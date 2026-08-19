@@ -35,6 +35,11 @@ public class GLBAnimationPlayer: MonoBehaviour
         Stop();
         this._behaviourGLB = behaviour;
         ResetAnimation();
+        if (behaviour && behaviour.RenderGLB != null)
+        {
+            GLBAnimationStage defStageFrame = behaviour.RenderGLB.Animations["default"];
+            this._time = defStageFrame.startTime;
+        }
         onSetBehaviourGLB?.Invoke(behaviour);
         Debug.Log($"[GLBAnimaPlayer] 设置BehaviourGLB: {BehaviourGLB?.name ?? "null"}");
     }

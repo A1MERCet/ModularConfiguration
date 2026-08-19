@@ -25,7 +25,8 @@ public class ModularConfiguration : SingletonMono<ModularConfiguration>
             _init = true;
             
             // var package = MWFPackageManager.instance.LoadPackage("D:\\Unity\\Project\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
-            var package = MWFPackageManager.instance.LoadPackage("C:\\workspace\\ProjectBR\\Source\\Code\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
+            var package = MWFPackageManager.instance.LoadPackage("D:\\Unity\\Project\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\OfficialPack");
+            // var package = MWFPackageManager.instance.LoadPackage("C:\\workspace\\ProjectBR\\Source\\Code\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
             UIMWFResource.instance.SetMWFPackage(package);
         }
     }
@@ -53,6 +54,7 @@ public class ModularConfiguration : SingletonMono<ModularConfiguration>
                 loadedObj.transform.parent = editScene;
                 loadedObj.incrementPos.defaultValue.position = new Vector3(0, 0.01F, 0.1F);
                 loadedObj.transform.localRotation = Quaternion.identity;
+                uiGLBPlayer.Timeline.ClearMarks();
             }
         }
     }

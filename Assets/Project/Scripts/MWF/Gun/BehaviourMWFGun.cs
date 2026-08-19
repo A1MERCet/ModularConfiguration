@@ -7,9 +7,11 @@ public class BehaviourMWFGun: BehaviourGLB
     public MWFTypeGun ConfigGun => Config as MWFTypeGun;
     public MWFRenderGun RenderGun => ConfigGun?.configRender as MWFRenderGun;
     private bool aiming = false;
+    private bool spring = false;
     public Dictionary<string, List<BehaviourMWF>> attachments = new();
     
     private IncrementPos.Pos targetAimPos = new();
+    private IncrementPos.Pos targetSprintPos = new();
 
     public void RemoveAttachment(MWFTypeAtt att)
     {
@@ -40,21 +42,46 @@ public class BehaviourMWFGun: BehaviourGLB
     {
         base.Start();
         HideInChildren("flashModel");
+        // HideInChildren(new string[]
+        // {
+        //     "flashModel",
+        //     "leftArmModel",
+        //     "leftArmLayerModel",
+        //     "leftArmSlimModel",
+        //     "leftArmLayerSlimModel",
+        //     "rightArmModel",
+        //     "rightArmLayerModel",
+        //     "rightArmSlimModel",
+        //     "rightArmLayerSlimModel",
+        // });
     }
 
     protected override void Update()
     {
         base.Update();
-        if (Input.GetMouseButtonDown(1) && !UIConfigManger.instance.Editing) aiming = !aiming;
-        if (aiming && UIConfigManger.instance.Editing) aiming = false;
+        if (Input.GetMouseButtonDown(1) && !UIConfigManger.instance.Editing) {
+            aiming = !aiming;
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !UIConfigManger.instance.Editing) {
+            spring = !spring;
+        }
+        if (UIConfigManger.instance.Editing) {
+            aiming = false;
+            spring = false;
+        }
         
         if (RenderGun != null && model != null)
         {
             targetAimPos.position = Vector3.Lerp(targetAimPos.position, aiming ? RenderGun.translateAimPosition: Vector3.zero, Time.deltaTime * 20F);
             targetAimPos.rotation = Vector3.Lerp(targetAimPos.rotation, aiming ? RenderGun.rotateAimPosition: Vector3.zero, Time.deltaTime * 20F);
             
-            incrementPos["gun"].position = UtilMC.Location2Vector(RenderGun.translateHipPosition + RenderGun.globalTranslate + targetAimPos.position);
-            incrementPos["gun"].rotation = UtilMC.Rotation2Vector(RenderGun.rotateHipPosition + RenderGun.globalRotate + targetAimPos.rotation) + new Vector3(0, 90F, 0F);
+            targetSprintPos.position = Vector3.Lerp(targetSprintPos.position, spring ? RenderGun.sprintTranslate: Vector3.zero, Time.deltaTime * 20F);
+            targetSprintPos.rotation = Vector3.Lerp(targetSprintPos.rotation, spring ? RenderGun.sprintRotate: Vector3.zero, Time.deltaTime * 20F);
+            
+            incrementPos["gun"].position = UtilMC.Location2Vector(RenderGun.translateHipPosition + RenderGun.globalTranslate + targetAimPos.position + targetSprintPos.position);
+            incrementPos["gun"].rotation = UtilMC.Rotation2Vector(RenderGun.rotateHipPosition + RenderGun.globalRotate + targetAimPos.rotation + targetSprintPos.rotation) + new Vector3(0, 90F, 0F);
+            // incrementPos["gun"].position = UtilMC.Location2Vector(spring ? targetSprintPos.position : (RenderGun.translateHipPosition + RenderGun.globalTranslate + targetAimPos.position));
+            // incrementPos["gun"].rotation = UtilMC.Rotation2Vector(spring ? targetSprintPos.rotation : (RenderGun.rotateHipPosition + RenderGun.globalRotate + targetAimPos.rotation)) + new Vector3(0, 90F, 0F);
         }
     }
 }

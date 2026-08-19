@@ -5955,6 +5955,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2859535282562510848}
     m_Modifications:
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2798639329443133705, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
       propertyPath: m_Name
       value: EditSprint
@@ -6109,6 +6133,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2859535282562510848}
     m_Modifications:
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2798639329443133705, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
       propertyPath: m_Name
       value: EditHipPos
@@ -7240,6 +7288,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2859535282562510848}
     m_Modifications:
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: clickScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 694452774895532895, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
+      propertyPath: hoverScale.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2798639329443133705, guid: deb4cca7acfbe5d43b4fc5850c6035a8, type: 3}
       propertyPath: m_Name
       value: EditAimPos

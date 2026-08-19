@@ -9,24 +9,19 @@ public class UIConfigPropertyGun : UIConfigProperty
 
     public void EditHipPos()
     {
-        UIConfigManger.instance.EditBehaviourMWF.updatePos = false;
+        UIConfigManger.instance.EditBehaviour.updatePos = false;
         var defPos = new IncrementPos.Pos(UtilMC.Location2Vector(RenderGun.translateHipPosition), UtilMC.Rotation2Vector(RenderGun.rotateHipPosition));
-        var editProperty = new UIConfigManger.EditProperty()
-        {
+        var editProperty = new UIConfigManger.EditProperty("根姿态") {
             defPos = defPos,
             onEditApply = (pos) => {
                 RenderGun.translateHipPosition = new Vector3(pos.position.z, pos.position.y, pos.position.x) * 100F;
                 RenderGun.rotateHipPosition = pos.rotation;
-                UIConfigManger.instance.EditBehaviourMWF.updatePos = true;
-            }, 
-            onEditUpdate = (pos) => {
-                UIConfigManger.instance.EditBehaviourMWF.incrementPosModify["showcase"].position = pos.position;
-                UIConfigManger.instance.EditBehaviourMWF.incrementPosModify["showcase"].rotation = pos.rotation;
+                UIConfigManger.instance.EditBehaviour.updatePos = true;
             }, 
             onEditCancel = (pos) => {
-                UIConfigManger.instance.EditBehaviourMWF.incrementPosModify["showcase"].position = Vector3.zero;
-                UIConfigManger.instance.EditBehaviourMWF.incrementPosModify["showcase"].rotation = Vector3.zero;
-                UIConfigManger.instance.EditBehaviourMWF.updatePos = true;
+                UIConfigManger.instance.EditBehaviour.incrementPosModify["showcase"].position = Vector3.zero;
+                UIConfigManger.instance.EditBehaviour.incrementPosModify["showcase"].rotation = Vector3.zero;
+                UIConfigManger.instance.EditBehaviour.updatePos = true;
             }
         };
         UIConfigManger.instance.StartPosEdit(editProperty);
@@ -34,18 +29,32 @@ public class UIConfigPropertyGun : UIConfigProperty
     
     public void EditAimPos()
     {
-        UIConfigManger.instance.StartPosEdit((pos) => {
-            RenderGun.translateAimPosition = new Vector3(pos.position.z, pos.position.y, pos.position.x) * 100F;
-            RenderGun.rotateAimPosition = pos.rotation;
-        });
+        var defPos = new IncrementPos.Pos();
+        defPos.position = UtilMC.Location2Vector(RenderGun.translateAimPosition);
+        defPos.rotation = UtilMC.Rotation2Vector(RenderGun.rotateAimPosition);
+        var editProperty = new UIConfigManger.EditProperty("瞄准姿态") {
+            defPos = defPos,
+            onEditApply = (pos) => {
+                RenderGun.translateAimPosition = new Vector3(pos.position.z, pos.position.y, pos.position.x) * 100F;
+                RenderGun.rotateAimPosition = pos.rotation;
+            }
+        };
+        UIConfigManger.instance.StartPosEdit(editProperty);
     }
     
     public void EditSprintPos()
     {
-        UIConfigManger.instance.StartPosEdit((pos) => {
-            RenderGun.sprintTranslate = new Vector3(pos.position.z, pos.position.y, pos.position.x) * 100F;
-            RenderGun.sprintRotate = pos.rotation;
-        });
+        var defPos = new IncrementPos.Pos();
+        defPos.position = UtilMC.Location2Vector(RenderGun.sprintTranslate);
+        defPos.rotation = UtilMC.Rotation2Vector(RenderGun.sprintRotate);
+        var editProperty = new UIConfigManger.EditProperty("奔跑姿态") {
+            defPos = defPos,
+            onEditApply = (pos) => {
+                RenderGun.sprintTranslate = new Vector3(pos.position.z, pos.position.y, pos.position.x) * 100F;
+                RenderGun.sprintRotate = pos.rotation;
+            }
+        };
+        UIConfigManger.instance.StartPosEdit(editProperty);
     }
     
 }

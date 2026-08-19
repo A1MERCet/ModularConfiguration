@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Project;
@@ -8,6 +9,31 @@ using UnityEngine;
 [Serializable]
 public class MWFRenderGun: MWFRenderGLB
 {
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
+    public class AttachSlot
+    {
+        [JsonProperty] public Vector3Seri translate;
+        [JsonProperty] public Vector3Seri scale;
+        [JsonProperty] public Vector3Seri rotate;
+
+        public Vector3 Translate
+        {
+            get => translate.ToVector3();
+            set => translate.FromVector3(value);
+        }
+        public Vector3 Rotate
+        {
+            get => rotate.ToVector3();
+            set => rotate.FromVector3(value);
+        }
+        public Vector3 Scale
+        {
+            get => scale.ToVector3();
+            set => scale.FromVector3(value);
+        }
+    }
+    
     private SerializableDic<string, AttachmentPose> attachmentPoses = new();
     public SerializableDic<string, AttachmentPose> AttachmentPoses => attachmentPoses;
     
@@ -53,6 +79,17 @@ public class MWFRenderGun: MWFRenderGLB
         get => JsonObject["aim"]?.GetVector3("translateAimPosition") ?? Vector3.zero;
         set => SetValue("aim.translateAimPosition", value);
     }
+    
+    /**
+     * Attachments
+     */
+    public Dictionary<string, AttachSlot> attachmentGroup
+    {
+        get => JsonObject?.Get<Dictionary<string, AttachSlot>>("attachmentGroup") ?? new Dictionary<string, AttachSlot>();
+        set => SetValue("attachmentGroup", value);
+    }
+    public AttachSlot AttachmentGroup(string slot) => JsonObject?.Get<AttachSlot>($"attachmentGroup.{slot}") ?? new AttachSlot();
+    public void AttachmentGroup(AttachSlot slot) => SetValue($"attachmentGroup.{slot}", slot);
     
     /**
      * global

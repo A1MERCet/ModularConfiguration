@@ -87,9 +87,14 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
 
     public void SetMarks(List<Mark> marks)
     {
+        ClearMarks();
+        marks.ForEach(e => AddMark(e));
+    }
+
+    public void ClearMarks()
+    {
         ClearMarkInstances();
         this.marks.Clear();
-        marks.ForEach(e => AddMark(e));
     }
 
     // public UIAnimaStageMark CreateMark(Mark m)
