@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Project;
 using UnityEngine;
 
 public abstract class MWFRenderGLB: MWFRender
@@ -11,12 +12,23 @@ public abstract class MWFRenderGLB: MWFRender
 
     public GLBScene loadedGLBScene;
 
+    
+    /**
+     * general
+     */
+    public float FPS
+    { 
+        get => JsonObject?.GetFloat("FPS", 30F) ?? 30F;
+        set => SetValue("FPS", value);
+    }
+    
+    
     public virtual void LoadGLB(Action<GLBScene> onLoaded)
     {
         TexturePBR texture = new TexturePBR() {
-            baseColorPath = configType.modelSkins.Length == 0 ? "" : Path.Combine(configType.package.skinPath, configType.GetConfigType(), $"{configType.modelSkins[0].skinAsset}.png")
+            baseColorPath = configType.modelSkins.Length == 0 ? "" : Path.Combine(configType.package.skinPath, GetConfigType(), $"{configType.modelSkins[0].skinAsset}.png")
         };
-        GLBSceneManager.instance.Load(Path.Combine(configType.package.glbPath, configType.GetConfigType()), ModelFileName, texture, (scene) => {
+        GLBSceneManager.instance.Load(Path.Combine(configType.package.glbPath, GetConfigType()), ModelFileName, texture, (scene) => {
             OnGLBLoaded(scene);
             onLoaded?.Invoke(scene);
         });

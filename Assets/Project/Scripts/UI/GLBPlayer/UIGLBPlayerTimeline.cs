@@ -41,7 +41,7 @@ public class UIGLBPlayerTimeline : MonoBehaviour, IPointerEnterHandler, IPointer
     
     void Update()
     {
-        if (Input.mouseScrollDelta.y != 0) {
+        if (_input && Input.mouseScrollDelta.y != 0) {
             if (Input.GetKey(KeyCode.LeftControl)) {
                 showFrame = Mathf.Clamp(showFrame + (showFrame * -Input.mouseScrollDelta.y * 0.1F), 100F, maxFrame * 2F);
                 UpdateMarkInstances();

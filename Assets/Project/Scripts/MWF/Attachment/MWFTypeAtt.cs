@@ -10,5 +10,5 @@ public class MWFTypeAtt: MWFTypeOBJ
         set => SetValue("Slot", value);
     }
     
-    public override string GetConfigType() => "attachment";
+    public override string GetConfigType() => "attachments";
 }

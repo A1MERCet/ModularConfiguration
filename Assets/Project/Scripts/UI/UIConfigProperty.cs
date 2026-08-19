@@ -2,12 +2,11 @@ using System.Collections.Generic;
 using Project;
 using UnityEngine;
 
-public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
+public class UIConfigProperty : MonoBehaviour
 {
-    public LoggerProxy logger = new LoggerProxy("MWF配置界面");
-    public MWFTypeGun type;
-    public MWFRenderGun ConfigRender => type?.configRender as MWFRenderGun;
-
+    public LoggerProxy logger = new LoggerProxy("配置界面");
+    public MWFType type;
+    public MWFRender ConfigRender => (type as MWFTypeRender)?.configRender;
     
     [Header("不需要修改 runtime自动创建")]
     public SerializableDic<string, GUIInput> properties = new();
@@ -21,7 +20,7 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
         }
     }
 
-    public void SetConfig(MWFTypeGun type)
+    public void SetConfig(MWFType type)
     {
         ClearEventHandler();
         this.type = type;
@@ -36,26 +35,25 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
       
     }
 
-    protected override void OnDestroy()
+    protected virtual void OnDestroy()
     {
-        base.OnDestroy();
         ClearEventHandler();
         foreach (var input in properties.Values)
             input.onValueChanged.RemoveListener(OnInputValueChanged);
     }
 
-    private void ClearEventHandler()
+    public void ClearEventHandler()
     {
         if (ConfigRender != null) ConfigRender.onPropertyChanged -= OnRenderPropertyValueChanged;
         if (type != null) type.onPropertyChanged -= OnTypePropertyValueChanged;
     }
-    private void InitEventHandler()
+    public void InitEventHandler()
     {
         foreach (GUIInput input in GetComponentsInChildren<GUIInput>())
         {
             MWFConfig cfg = null;
-            if (input.isType) cfg = type;
-            else if (input.isRender) cfg = ConfigRender;
+            if (input.isRender && ConfigRender != null) cfg = ConfigRender;
+            else if (input.isType) cfg = type;
             if (cfg != null) input.SetValue(cfg.JsonObject.Get(input.propertyPath)); 
         }
 
@@ -64,7 +62,7 @@ public class UIGunConfiguration : SingletonMono<UIGunConfiguration>
     }
     private void OnInputValueChanged(GUIInput input, object value)
     {
-        logger.Info($"输入更新 {input.propertyPath}: {value ?? "null"}({value?.GetType().Name ?? "null"})");
+        // logger.Info($"输入更新 {input.propertyPath}: {value ?? "null"}({value?.GetType().Name ?? "null"})");
         if (input.isType) {
             type.SetValue(input.propertyPath, value);
         } else if (input.isRender) {

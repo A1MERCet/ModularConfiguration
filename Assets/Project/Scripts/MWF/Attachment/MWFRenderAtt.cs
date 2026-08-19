@@ -2,6 +2,6 @@
 
 public class MWFRenderAtt: MWFRenderOBJ
 {
-    public override string GetConfigType() => "attachment";
+    public override string GetConfigType() => "attachments";
     protected override BehaviourMWF PostLoadOBJ(GameObject o) => o.AddComponent<BehaviourMWFAtt>();
 }

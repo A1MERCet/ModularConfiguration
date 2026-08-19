@@ -2,7 +2,6 @@
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 
 public class MWFPackageManager: SingletonMono<MWFPackageManager>
 {
@@ -23,7 +22,7 @@ public class MWFPackageManager: SingletonMono<MWFPackageManager>
             iconPath = Path.Combine(path, "assets", "modularwarfare", "textures", "items"),
             assetsPath = Path.Combine(path, "assets", "modularwarfare"),
             glbPath = Path.Combine(path, "assets", "modularwarfare", "gltf"),
-            objPath = Path.Combine(path, "assets", "modularwarfare", "obj"),
+            objPath = Path.Combine(path, "obj"),
         };
 
         var pathTextures = Path.Combine(path, "textures");

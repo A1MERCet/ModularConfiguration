@@ -23,20 +23,28 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
         ClearContent();
         switch (showType)
         {
-            case "guns":
-            {
+            case "guns": {
                 foreach (var type in mwfPackage.Configs.Values)
                     if (type is MWFTypeGun typeGun)
-                    {
-                        var clone = Instantiate(ResourceManager.instance.ui.RESOURCE_TYPE_GUN.gameObject, content);
-                        var item = clone.GetComponent<UIMWFTypeGun>();
-                        item.SetType(typeGun);
-                        item.onClick += () => ModularConfiguration.instance.SetEditConfig(typeGun);
-                        LoadIcon(item.icon, Path.Combine(type.package.iconPath, "guns", $"{type.InternalName}.png"));
-                    }
+                        CreateUIMWFTypeRender(typeGun);
+                break;
+            }
+            case "attachments": {
+                foreach (var type in mwfPackage.Configs.Values)
+                    if (type is MWFTypeAtt typeAtt)
+                        CreateUIMWFTypeRender(typeAtt);
                 break;
             }
         }
+    }
+
+    private void CreateUIMWFTypeRender(MWFTypeRender config)
+    {
+        var clone = Instantiate(ResourceManager.instance.ui.RESOURCE_TYPE_RENDER.gameObject, content);
+        var item = clone.GetComponent<UIMWFTypeRender>();
+        item.SetType(config);
+        item.onClick += () => ModularConfiguration.instance.SetEditConfig(config);
+        LoadIcon(item.icon, Path.Combine(config.package.iconPath, config.GetConfigType(), $"{config.InternalName}.png"));
     }
 
     public void ClearContent()
@@ -47,12 +55,12 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
     
     public async void LoadIcon(RawImage raw, string path)
     {
-        
         if (!File.Exists(path)) {
             raw.texture = null;
             raw.color = Color.clear;
             return;
         }
+        raw.color = Color.clear;
         byte[] fileData = await File.ReadAllBytesAsync(path);
         await Task.Yield(); 
         var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
@@ -64,6 +72,13 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
             raw.color = Color.clear;
             Destroy(texture);
         }
+        raw.color = Color.white;
+    }
+
+    public void ActionSwitchType(string type)
+    {
+        showType = type;
+        UpdateContent();
     }
     
 }

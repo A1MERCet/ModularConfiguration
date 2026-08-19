@@ -14,11 +14,22 @@ public class MWFRenderGun: MWFRenderGLB
     /**
      * general
      */
-    public float FPS
+    public bool basicSprint
     { 
-        get => JsonObject?.GetFloat("FPS", 30F) ?? 30F;
-        set => SetValue("FPS", value);
+        get => JsonObject["sprint"]?.GetBool("basicSprint", false) ?? false;
+        set => SetValue("sprint.basicSprint", value);
     }
+    public Vector3 sprintRotate
+    {
+        get => JsonObject["sprint"]?.GetVector3("sprintRotate") ?? Vector3.zero;
+        set => SetValue("sprint.sprintRotate", value);
+    }
+    public Vector3 sprintTranslate
+    {
+        get => JsonObject["sprint"]?.GetVector3("sprintTranslate") ?? Vector3.zero;
+        set => SetValue("sprint.sprintTranslate", value);
+    }
+    
     /**
      * aim
      */
@@ -42,6 +53,7 @@ public class MWFRenderGun: MWFRenderGLB
         get => JsonObject["aim"]?.GetVector3("translateAimPosition") ?? Vector3.zero;
         set => SetValue("aim.translateAimPosition", value);
     }
+    
     /**
      * global
      */
@@ -60,6 +72,7 @@ public class MWFRenderGun: MWFRenderGLB
         get => JsonObject["global"]?.GetVector3("globalRotate") ?? Vector3.zero;
         set => SetValue("global.globalRotate", value);
     }
+    
     /**
      * extra
      */

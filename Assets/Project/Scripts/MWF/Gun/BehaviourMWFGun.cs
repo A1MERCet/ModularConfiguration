@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using Project;
 using UnityEngine;
 
-public class BehaviourMWFGun: BehaviourMWF
+public class BehaviourMWFGun: BehaviourGLB
 {
     public MWFTypeGun ConfigGun => Config as MWFTypeGun;
-    public MWFRenderGun ConfigRender => ConfigGun.configRender as MWFRenderGun;
+    public MWFRenderGun RenderGun => ConfigGun?.configRender as MWFRenderGun;
     private bool aiming = false;
     public Dictionary<string, List<BehaviourMWF>> attachments = new();
+    
+    private IncrementPos.Pos targetAimPos = new();
 
     public void RemoveAttachment(MWFTypeAtt att)
     {
@@ -27,54 +30,31 @@ public class BehaviourMWFGun: BehaviourMWF
         attachments[att.InternalName].Add(behaviour);
     }
 
+    protected override void Awake()
+    {
+        base.Awake();
+        incrementPos.Add("gun");
+    }
+    
     protected override void Start()
     {
         base.Start();
-        ShowUnnecessaryModel();
         HideInChildren("flashModel");
     }
 
     protected override void Update()
     {
         base.Update();
-        if (Input.GetMouseButtonDown(1)) aiming = !aiming;
-    }
-    
-    protected override  void FixedUpdate()
-    {
-        base.FixedUpdate();
-        if (ConfigRender != null && model != null)
+        if (Input.GetMouseButtonDown(1) && !UIConfigManger.instance.Editing) aiming = !aiming;
+        if (aiming && UIConfigManger.instance.Editing) aiming = false;
+        
+        if (RenderGun != null && model != null)
         {
-            var targetPosition = (ConfigRender.translateHipPosition + ConfigRender.globalTranslate);
-            if (aiming) targetPosition += ConfigRender.translateAimPosition;
-            model.transform.localPosition = new Vector3(targetPosition.z, targetPosition.y, targetPosition.x) * 0.01F + new Vector3(0,2,0);
-            model.transform.localRotation = Quaternion.identity;
-            model.transform.Rotate(Vector3.up, 90F);
+            targetAimPos.position = Vector3.Lerp(targetAimPos.position, aiming ? RenderGun.translateAimPosition: Vector3.zero, Time.deltaTime * 20F);
+            targetAimPos.rotation = Vector3.Lerp(targetAimPos.rotation, aiming ? RenderGun.rotateAimPosition: Vector3.zero, Time.deltaTime * 20F);
+            
+            incrementPos["gun"].position = UtilMC.Location2Vector(RenderGun.translateHipPosition + RenderGun.globalTranslate + targetAimPos.position);
+            incrementPos["gun"].rotation = UtilMC.Rotation2Vector(RenderGun.rotateHipPosition + RenderGun.globalRotate + targetAimPos.rotation) + new Vector3(0, 90F, 0F);
         }
-    }
-
-    private List<string> unnecessaryMode = new  List<string>()
-    {
-        "flashModel"
-    };
-
-    public void HideInChildren(string name)
-    {
-        foreach (var c in UtilUnity.GetChildren(transform))
-            if (c.name == name)
-                c.gameObject.SetActive(false);
-    }
-    
-    public void HideUnnecessaryModel()
-    {
-        foreach (var c in UtilUnity.GetChildren(transform))
-            if (unnecessaryMode.Contains(c.name))
-                c.gameObject.SetActive(false);
-    }
-    public void ShowUnnecessaryModel()
-    {
-        foreach (var c in UtilUnity.GetChildren(transform))
-            if (unnecessaryMode.Contains(c.name))
-                c.gameObject.SetActive(true);
     }
 }

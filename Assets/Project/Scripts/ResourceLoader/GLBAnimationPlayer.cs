@@ -24,26 +24,26 @@ public class GLBAnimationPlayer: MonoBehaviour
     public float speed = 1F;
     public bool loop = true;
 
-    private BehaviourMWFGun _behaviourMWFGun;
-    public BehaviourMWFGun BehaviourMWFGun => (_behaviourMWFGun == null || _behaviourMWFGun.IsDestroyed()) ? null : _behaviourMWFGun;
-    public Animation Animation => BehaviourMWFGun?.Animation;
+    private BehaviourGLB _behaviourGLB;
+    public BehaviourGLB BehaviourGLB => (_behaviourGLB == null || _behaviourGLB.IsDestroyed()) ? null : _behaviourGLB;
+    public Animation Animation => BehaviourGLB?.Animation;
 
-    public Action<BehaviourMWFGun> onSetBehaviourMWFGun;
+    public Action<BehaviourGLB> onSetBehaviourGLB;
     
-    public void SetBehaviourMWFGun(BehaviourMWFGun behaviour) {
-        if (_behaviourMWFGun == behaviour) return;
+    public void SetBehaviourGLB(BehaviourGLB behaviour) {
+        if (_behaviourGLB == behaviour) return;
         Stop();
-        this._behaviourMWFGun = behaviour;
+        this._behaviourGLB = behaviour;
         ResetAnimation();
-        onSetBehaviourMWFGun?.Invoke(behaviour);
-        Debug.Log($"[GLBAnimaPlayer] 设置BehaviourMWFGun: {BehaviourMWFGun?.name ?? "null"}");
+        onSetBehaviourGLB?.Invoke(behaviour);
+        Debug.Log($"[GLBAnimaPlayer] 设置BehaviourGLB: {BehaviourGLB?.name ?? "null"}");
     }
 
-    public Dictionary<string, GLBAnimationStage> GetAnimaStates() => BehaviourMWFGun?.ConfigRender?.Animations ?? new Dictionary<string, GLBAnimationStage>();
+    public Dictionary<string, GLBAnimationStage> GetAnimaStates() => BehaviourGLB?.RenderGLB?.Animations ?? new Dictionary<string, GLBAnimationStage>();
     
     private void Update()
     {
-        if (!BehaviourMWFGun) SetBehaviourMWFGun(null);
+        if (!BehaviourGLB) SetBehaviourGLB(null);
         
         if (_maxTime <= 0F) {
             _time = 0F;
@@ -109,8 +109,8 @@ public class GLBAnimationPlayer: MonoBehaviour
     private void ResetAnimation()
     {
         if (Animation) {
-            var fps = _behaviourMWFGun.ConfigRender.FPS;
-            logger.Info($"开始播放GLB动画: {BehaviourMWFGun?.name ?? "null"}");
+            var fps = _behaviourGLB.RenderGLB.FPS;
+            logger.Info($"开始播放GLB动画: {BehaviourGLB?.name ?? "null"}");
             int layer = 0;
             foreach (AnimationState state in Animation) {
                 state.layer = layer++;

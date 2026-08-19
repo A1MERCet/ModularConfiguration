@@ -18,15 +18,16 @@ public class UIGLBPlayer : MonoBehaviour
     public Button buttonStop;
     public Button buttonPause;
     public Button buttonResume;
+    public UIMouseDetector mouseDetector;
     
     public void SetPlayer(GLBAnimationPlayer player)
     {
-        if (_player) _player.onSetBehaviourMWFGun -= OnSetBehaviourMWFGun;
+        if (_player) _player.onSetBehaviourGLB -= OnSetBehaviourGLB;
         _player = player;
-        if (_player) _player.onSetBehaviourMWFGun += OnSetBehaviourMWFGun;
+        if (_player) _player.onSetBehaviourGLB += OnSetBehaviourGLB;
     }
 
-    private void OnSetBehaviourMWFGun(BehaviourMWFGun behaviour)
+    private void OnSetBehaviourGLB(BehaviourGLB behaviour)
     {
         _timeline.SetMaxFrame(_player?.MaxFrame ?? 0);
         UpdateTimelineMarks();
@@ -71,7 +72,7 @@ public class UIGLBPlayer : MonoBehaviour
                 if (!_player.Playing) _player.Play();
                 else if (_player.Paused) _player.Resume();
                 else _player.Pause();
-            } else if (Input.GetKeyDown(KeyCode.Escape)) {
+            } else if (Input.GetKeyDown(KeyCode.Backspace)) {
                 if (_player.Playing) _player.Stop();
             }
         }

@@ -9,12 +9,13 @@ public abstract class MWFRenderOBJ: MWFRender
 
     public virtual BehaviourMWF LoadOBJ()
     {
-        var path = Path.Combine(configType.package.objPath, "guns", $"{configType.InternalName}", ".obj");
+        var path = Path.Combine(configType.package.objPath, GetConfigType(), $"{ModelFileName}");
         Debug.Log($"准备加载OBJScene {path} {configType.InternalName}.obj");
 
         var obj = new OBJLoader().Load(path);
+        obj.transform.localScale = Vector3.one * 0.01F;
         TexturePBR texture = new TexturePBR() {
-            baseColorPath = Path.Combine(configType.package.skinPath, "guns", $"{configType.InternalName}.png")
+            baseColorPath = Path.Combine(configType.package.skinPath,  GetConfigType(), configType.modelSkins.Length > 0 ? $"{configType.modelSkins[0].skinAsset}.png" : "")
         };
         Debug.Log($"加载纹理 {texture.baseColorPath}");
         texture.LoadAsync();
@@ -33,7 +34,8 @@ public abstract class MWFRenderOBJ: MWFRender
                 mesh.material = material;
             }
         };
-        loadedOBJ = PostLoadOBJ(obj);;
+        loadedOBJ = PostLoadOBJ(obj);
+        loadedOBJ.model = obj;
         return loadedOBJ;
     }
     protected virtual BehaviourMWF PostLoadOBJ(GameObject o) => o.AddComponent<BehaviourMWF>();

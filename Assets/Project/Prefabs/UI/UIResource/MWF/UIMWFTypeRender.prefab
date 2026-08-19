@@ -516,7 +516,7 @@ GameObject:
   - component: {fileID: 689540128019656846}
   - component: {fileID: 8613192336095401539}
   m_Layer: 5
-  m_Name: UIMWFTypeGun
+  m_Name: UIMWFTypeRender
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

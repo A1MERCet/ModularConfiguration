@@ -13,6 +13,17 @@ namespace Project
         {
             [SerializeField] public Vector3 position = Vector3.zero;
             [SerializeField] public Vector3 rotation = Vector3.zero;
+
+            public Pos(Vector3 position, Vector3 rotation)
+            {
+                this.position = position;
+                this.rotation = rotation;
+            }
+            
+            public Pos()
+            {
+            }
+
             public Quaternion Quaternion => Quaternion.Euler(rotation);
             public Pos SetPos(Vector3 v)
             {
@@ -79,6 +90,7 @@ namespace Project
         public PosDictionary Get()                          {return _increments;}
         public Pos Get(string v)                            {return _increments[v];}
         public IncrementPos Add(string v , ref Pos p)       {_increments[v]=p; Count();return this; }
+        public IncrementPos Set(string v , Pos p)           {_increments[v]=p; Count();return this; }
         public IncrementPos Add(string v)                   {_increments[v]=new Pos(); Count();return this; }
         public Pos Remove(string v)                         { Pos p = _increments[v];_increments.Remove(v);Count();return p; }
 
@@ -95,7 +107,10 @@ namespace Project
 
         public Pos this[string id]
         {
-            get => _increments[id];
+            get {
+                if (!_increments.ContainsKey(id)) Add(id);
+                return _increments[id];
+            }
             set => _increments[id] = value;
         }
 

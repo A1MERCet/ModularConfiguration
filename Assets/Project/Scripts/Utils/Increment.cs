@@ -14,6 +14,28 @@ namespace Project
         public Increment Add(string v)                        {_increments[v]=0F; Count();return this; }
         public float Remove(string v)                         { float p = _increments[v];_increments.Remove(v);Count();return p; }
 
+        public Increment Set(string v , float p)
+        {
+            if (!_increments.ContainsKey(v)) Add(v);
+            _increments[v] = p; 
+            Count();
+            return this; 
+        }
+        public Increment Increase(string v , float p)
+        {
+            if (!_increments.ContainsKey(v)) Add(v);
+            _increments[v] += p; 
+            Count();
+            return this; 
+        }
+        public Increment Reduce(string v , float p)
+        {
+            if (!_increments.ContainsKey(v)) Add(v);
+            _increments[v] -= p; 
+            Count();
+            return this; 
+        }
+        
         protected float cache;
         public float Cache => cache;
 

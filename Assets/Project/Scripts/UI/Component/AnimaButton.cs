@@ -1,3 +1,4 @@
+using System;
 using Coffee.UIEffects;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -42,6 +43,12 @@ public class AnimaButton : MonoBehaviour ,IPointerEnterHandler, IPointerExitHand
         originalColor = image?.color ?? Color.white;
         originOutlineColor = effect.edgeColor;
         originOutline = effect.edgeWidth;
+    }
+
+    private void OnDisable()
+    {
+        hoverd = false;
+        clicked = false;
     }
 
     void FixedUpdate()
