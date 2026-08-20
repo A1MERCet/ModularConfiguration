@@ -20,7 +20,10 @@ public class BehaviourMWFGun: BehaviourGLB
         {
             var attachGroup = RenderGun.attachmentGroup;
             attachGroup.TryGetValue(attachType, out MWFRenderGun.AttachSlot slot);
-            if (slot != null) ShowInChildren(slot.hidePart);
+            if (slot != null) {
+                ShowInChildren(slot.hidePart);
+                HideInChildren(slot.showPart);
+            }
             
             Destroy(attachments[attachType].gameObject);
             attachments.Remove(attachType);
@@ -35,7 +38,10 @@ public class BehaviourMWFGun: BehaviourGLB
         attachments.Add(att.attachmentType, behaviour as BehaviourMWFAtt);
         var attachGroup = RenderGun.attachmentGroup;
         attachGroup.TryGetValue(att.attachmentType, out MWFRenderGun.AttachSlot slot);
-        if (slot != null) HideInChildren(slot.hidePart);
+        if (slot != null) {
+            ShowInChildren(slot.showPart);
+            HideInChildren(slot.hidePart);
+        }
     }
 
     protected override void Awake()
@@ -61,6 +67,7 @@ public class BehaviourMWFGun: BehaviourGLB
             node.transform.SetParent(GetNodeOrDefault("gunModel"));
             node.transform.localPosition = Vector3.zero;
             node.transform.localRotation = Quaternion.identity;
+            node.transform.localScale = Vector3.one;
             attachPositions.Add(attachType, node.transform);
         }
 
@@ -71,11 +78,19 @@ public class BehaviourMWFGun: BehaviourGLB
             var bindPart = GetNodeOrDefault("gunModel");
             Transform node = attachPositions[attachType];
             node.transform.SetParent(bindPart.transform, false);
+
+            attachments.TryGetValue(attachType, out var behaviourAtt);
+            RenderGun.attachment.TryGetValue(behaviourAtt?.ConfigAtt?.InternalName ?? "", out var modify);
             
             Vector3 localPos = attachSlot.translate.ToVector3();
             Quaternion rot = Quaternion.AngleAxis(-180F, Vector3.up);
             node.transform.localPosition = rot * localPos;
             node.transform.localRotation = rot * Quaternion.Euler(attachSlot.Rotate);
+            Vector3 modifyScale = modify == null ? Vector3.one : (modify.Scale.magnitude == 0F ? Vector3.one : modify.Scale);
+            Vector3 slotScale = attachSlot.Scale.magnitude == 0F ? Vector3.one : attachSlot.Scale;
+            node.transform.localScale = new Vector3(slotScale.x * modifyScale.x, slotScale.y * modifyScale.y, slotScale.z * modifyScale.z);
+            foreach (Transform t in node.transform)
+                t.transform.localScale = Vector3.one;
         }
     }
     

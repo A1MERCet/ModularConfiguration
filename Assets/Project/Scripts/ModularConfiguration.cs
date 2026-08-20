@@ -24,9 +24,9 @@ public class ModularConfiguration : SingletonMono<ModularConfiguration>
         {
             _init = true;
             
-            // var package = MWFPackageManager.instance.LoadPackage("D:\\Unity\\Project\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
+            var package = MWFPackageManager.instance.LoadPackage("D:\\Unity\\Project\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
             // var package = MWFPackageManager.instance.LoadPackage("D:\\Unity\\Project\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\OfficialPack");
-            var package = MWFPackageManager.instance.LoadPackage("C:\\workspace\\ProjectBR\\Source\\Code\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
+            // var package = MWFPackageManager.instance.LoadPackage("C:\\workspace\\ProjectBR\\Source\\Code\\ModularConfiguration\\Assets\\Project\\Local\\MWFPackage\\TestPack");
             UIMWFResource.instance.SetMWFPackage(package);
         }
     }

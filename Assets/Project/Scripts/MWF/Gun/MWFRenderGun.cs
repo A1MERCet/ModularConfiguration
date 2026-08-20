@@ -15,6 +15,7 @@ public class MWFRenderGun: MWFRenderGLB
     {
         [JsonProperty] public string binding;
         [JsonProperty] public string[] hidePart;
+        [JsonProperty] public string[] showPart;
         [JsonProperty] public bool renderInsideSightModel;
         [JsonProperty] public float renderInsideGunOffset;
         [JsonProperty] public Vector3Seri sightAimPosOffset;
@@ -48,6 +49,8 @@ public class MWFRenderGun: MWFRenderGLB
             get => scale.ToVector3();
             set => scale.FromVector3(value);
         }
+
+        public override string ToString() => $"binding: {binding}, aimPos: {sightAimPosOffset} aimRot: {sightAimRotOffset} t:{translate} r:{rotate} s:{scale}";
     }
     
     [Serializable]
@@ -55,6 +58,7 @@ public class MWFRenderGun: MWFRenderGLB
     public class AttachSlot
     {
         [JsonProperty] public string[] hidePart;
+        [JsonProperty] public string[] showPart;
         [JsonProperty] public Vector3Seri translate;
         [JsonProperty] public Vector3Seri scale;
         [JsonProperty] public Vector3Seri rotate;
@@ -74,6 +78,8 @@ public class MWFRenderGun: MWFRenderGLB
             get => scale.ToVector3();
             set => scale.FromVector3(value);
         }
+
+        public override string ToString() => $"hidePart: {hidePart}, showPart: {showPart}, t:{translate} r:{rotate} s:{scale}";
     }
     
     private SerializableDic<string, AttachmentPose> attachmentPoses = new();

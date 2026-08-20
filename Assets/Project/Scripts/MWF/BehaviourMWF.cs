@@ -23,6 +23,12 @@ public class BehaviourMWF: MonoBehaviour
     
     protected virtual void Start()
     {
+        UpdateNodeCache();
+    }
+
+    public virtual void UpdateNodeCache()
+    {
+        _nodeCache.Clear();
         foreach (Transform child in UtilUnity.GetChildren(transform))
         {
             if (!_nodeCache.ContainsKey(child.name)) _nodeCache.Add(child.name, new List<Transform>());
