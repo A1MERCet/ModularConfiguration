@@ -49,11 +49,13 @@ public class UIConfigManger : SingletonMono<UIConfigManger>
     private void Start()
     {
         rectFOVPaent = rectFOV.parent.GetComponent<RectTransform>();
+        StopAttachModify();
     }
 
     private void Update()
     {
         mouseVelocity = Input.mousePosition - prevMousePos;
+        if (mouseVelocity.magnitude > 500) mouseVelocity = Vector3.zero;
         if (EditBehaviour != null) {
             if (mouseDetector.Hoverd) {
                 float multi = Input.GetKey(KeyCode.LeftShift) ? 0.1F : Input.GetKey(KeyCode.LeftControl) ? 5F : 1F;
@@ -115,20 +117,32 @@ public class UIConfigManger : SingletonMono<UIConfigManger>
             clone.SetConfig(config);
             uiConfigProperty = clone;
         }
-
-        if (config is MWFTypeGun) {
+        
+        if (ModularConfiguration.instance.editConfig is MWFTypeGun) {
             WorldController.instance.shootingRange.gameObject.SetActive(true);
-            UIAttachModify.instance.SetConfig(EditBehaviour as BehaviourMWFGun);
         }else {
             WorldController.instance.shootingRange.gameObject.SetActive(false);
         }
-        
+    }
+
+    public void StartAttachModify()
+    {
+        if (ModularConfiguration.instance.editConfig is MWFTypeGun) {
+            UIAttachModify.instance.gameObject.SetActive(true);
+            UIAttachModify.instance.SetConfig(EditBehaviour as BehaviourMWFGun);
+        }
+    }
+
+    public void StopAttachModify()
+    {
+        UIAttachModify.instance.SetConfig(null);
+        UIAttachModify.instance.gameObject.SetActive(false);
     }
 
     public void ClearConfig()
     {
         CancelEditPos();
-        UIAttachModify.instance.SetConfig(null);
+        StopAttachModify();
         if (uiConfigProperty) Destroy(uiConfigProperty.gameObject);
     }
 
@@ -180,4 +194,10 @@ public class UIConfigManger : SingletonMono<UIConfigManger>
     public bool Editing => _editProperty != null;
 
     public void ActionHidePanel() => _hidePanel = !_hidePanel;
+
+    public void ActionAttachModify()
+    {
+        if(UIAttachModify.instance.gameObject.activeInHierarchy) StopAttachModify();
+        else StartAttachModify();
+    }
 }

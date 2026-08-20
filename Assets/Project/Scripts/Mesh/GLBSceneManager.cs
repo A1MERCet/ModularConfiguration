@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GLBSceneManager : SingletonMono<GLBSceneManager>
@@ -10,7 +11,7 @@ public class GLBSceneManager : SingletonMono<GLBSceneManager>
         runtimeGLBTransform = new GameObject("RuntimeGLB").transform;
     }
 
-    public void Load(string path, string fileName, TexturePBR texture, Action<GLBScene> onLoaded = null) {
+    public void Load(string path, string fileName, TexturePBR texture, HashSet<string> skipMaterials, Action<GLBScene> onLoaded = null) {
         Debug.Log($"准备加载GLBScene {path} {fileName}");
         GLBLoader.instance.Load(path, fileName, (obj) =>
         {
@@ -27,6 +28,7 @@ public class GLBSceneManager : SingletonMono<GLBSceneManager>
             texture.onLoaded = () => {
                 foreach (var mesh in obj.GetComponentsInChildren<MeshRenderer>())
                 {
+                    if (skipMaterials.Contains(mesh.name)) continue;
                     string originName = mesh.material?.name ?? null;
                     var material = new Material(Shader.Find("Universal Render Pipeline/Autodesk Interactive/AutodeskInteractive"));
                     material.name = originName ?? mesh.name;
@@ -40,6 +42,7 @@ public class GLBSceneManager : SingletonMono<GLBSceneManager>
                 }
                 foreach (var mesh in obj.GetComponentsInChildren<SkinnedMeshRenderer>())
                 {
+                    if (skipMaterials.Contains(mesh.name)) continue;
                     string originName = mesh.material?.name ?? null;
                     var material = new Material(Shader.Find("Universal Render Pipeline/Autodesk Interactive/AutodeskInteractive"));
                     material.name = originName ?? mesh.name;

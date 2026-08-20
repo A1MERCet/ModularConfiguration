@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using Unity.Mathematics.Geometry;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class UIAttachModify : SingletonMono<UIAttachModify>
 {
@@ -47,11 +45,41 @@ public class UIAttachModify : SingletonMono<UIAttachModify>
     public void CreateAttachs()
     {
         if (_configGun == null) return;
-        foreach (var slotID in _configGun.acceptedAttachments.Keys)
+        foreach (var attachType in _configGun.acceptedAttachments.Keys)
         {
-            var slot = Instantiate(ResourceManager.instance.ui.RESOURCE_ATTACH_SLOT, content).GetComponent<UIAttachSlot>();
-            slot.slotID = slotID;
+            UIAttachSlot slot = Instantiate(ResourceManager.instance.ui.RESOURCE_ATTACH_SLOT, content).GetComponent<UIAttachSlot>();
+            slot.attachType = attachType;
             this._slots.Add(slot);
+            
+            _behaviour.attachments.TryGetValue(attachType, out BehaviourMWFAtt installed);
+            slot.installed = installed?.ConfigAtt;
+            slot.UpdateIcon();
+            
+            slot.onSelect += (s) => {
+                var allowed = _allowAttachs[slot.attachType];
+                var existing = _configGun.package.GetList<MWFTypeAtt>();
+
+                List<UIGunAttSelect.AttachItem> list = new();
+                foreach (var config in existing)
+                    list.Add(new UIGunAttSelect.AttachItem() {
+                        attach = config,
+                        locked = !allowed.Contains(config)
+                    });
+                list.Sort((a, b) => {
+                    int l = a.locked.CompareTo(b.locked);
+                    if (l != 0) return l;
+                    return string.CompareOrdinal(a.attach.InternalName, b.attach.InternalName);
+                });
+
+                UIGunAttSelect.instance.SetAttachmentList(list, (item) => {
+                    _behaviour.AddAttachment(item.attach);
+                    UIGunAttSelect.instance.Close();
+                    
+                    _behaviour.attachments.TryGetValue(attachType, out BehaviourMWFAtt installed);
+                    slot.installed = installed?.ConfigAtt;
+                    slot.UpdateIcon();
+                });
+            };
         }
     }
 
@@ -75,24 +103,47 @@ public class UIAttachModify : SingletonMono<UIAttachModify>
         foreach (var slot in _slots)
         {
             if (slot.IsDestroyed()) continue;
-            RenderGun.attachmentGroup.TryGetValue(slot.slotID, out MWFRenderGun.AttachSlot configAttach);
+            RenderGun.attachmentGroup.TryGetValue(slot.attachType, out MWFRenderGun.AttachSlot configAttach);
             if (configAttach == null) continue;
 
-            Vector3 worldPosAttach = _behaviour.model.transform.position + UtilMC.Location2Vector(configAttach.Translate);
-            Vector3 world2ScreenAttach = Camera.main.WorldToScreenPoint(worldPosAttach);
-            Vector2 baseScreenPos = new Vector2(world2ScreenAttach.x, world2ScreenAttach.y);
+            Transform bindPart = _behaviour.attachPositions[slot.attachType];
+            Vector3 world2ScreenAttach = Camera.main.WorldToScreenPoint(bindPart.position);
+            Vector2 screenPos = new Vector2(world2ScreenAttach.x, world2ScreenAttach.y);
 
-            Vector2 dir = (baseScreenPos - screenCenter).normalized;
-            Vector2 offsetScreenPos = baseScreenPos + dir * 0F;
+            Vector2 dir = (screenPos - screenCenter).normalized;
+            Vector2 offset = screenPos + dir * 300F;
 
-            slot.rect.position = new Vector3(offsetScreenPos.x, offsetScreenPos.y, 0);
+            slot.rect.position = new Vector3(offset.x, offset.y, 0);
             slot.rect.anchoredPosition = new Vector2(
                 Mathf.Clamp(slot.rect.anchoredPosition.x, -contentSize.x/2 + slot.rect.sizeDelta.x/2, contentSize.x/2 - slot.rect.sizeDelta.x/2),
                 Mathf.Clamp(slot.rect.anchoredPosition.y, -contentSize.y/2 + slot.rect.sizeDelta.y/2, contentSize.y/2 - slot.rect.sizeDelta.y/2)
             );
 
-            Debug.DrawLine(_behaviour.model.transform.position, worldPosAttach, Color.red);
-            Debug.DrawLine(Camera.main.transform.position, worldPosAttach, Color.blue);
+            Debug.DrawLine(_behaviour.model.transform.position, bindPart.position, Color.red);
+            Debug.DrawLine(Camera.main.transform.position, bindPart.position, Color.blue);
         }
+        // foreach (var slot in _slots)
+        // {
+        //     if (slot.IsDestroyed()) continue;
+        //     RenderGun.attachmentGroup.TryGetValue(slot.attachType, out MWFRenderGun.AttachSlot configAttach);
+        //     if (configAttach == null) continue;
+        //
+        //     Transform bindPart = _behaviour.model.transform;
+        //     Vector3 worldPosAttach = bindPart.TransformPoint(UtilMC.Location2Vector(configAttach.Translate * 100F));
+        //     Vector3 world2ScreenAttach = Camera.main.WorldToScreenPoint(worldPosAttach);
+        //     Vector2 screenPos = new Vector2(world2ScreenAttach.x, world2ScreenAttach.y);
+        //
+        //     Vector2 dir = (screenPos - screenCenter).normalized;
+        //     Vector2 offset = screenPos + dir * 0F;
+        //
+        //     slot.rect.position = new Vector3(offset.x, offset.y, 0);
+        //     slot.rect.anchoredPosition = new Vector2(
+        //         Mathf.Clamp(slot.rect.anchoredPosition.x, -contentSize.x/2 + slot.rect.sizeDelta.x/2, contentSize.x/2 - slot.rect.sizeDelta.x/2),
+        //         Mathf.Clamp(slot.rect.anchoredPosition.y, -contentSize.y/2 + slot.rect.sizeDelta.y/2, contentSize.y/2 - slot.rect.sizeDelta.y/2)
+        //     );
+        //
+        //     Debug.DrawLine(bindPart.position, worldPosAttach, Color.red);
+        //     Debug.DrawLine(Camera.main.transform.position, worldPosAttach, Color.blue);
+        // }
     }
 }

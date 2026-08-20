@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -73,6 +74,20 @@ public class UIMWFResource : SingletonMono<UIMWFResource>
             Destroy(texture);
         }
         raw.color = Color.white;
+    }
+    
+    public async void LoadTexture(string path, Action<Texture2D> onLoaded)
+    {
+        if (!File.Exists(path)) { onLoaded?.Invoke(null); return; }
+        byte[] fileData = await File.ReadAllBytesAsync(path);
+        await Task.Yield(); 
+        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        if (texture.LoadImage(fileData)) {
+            onLoaded?.Invoke(texture);
+        }else {
+            onLoaded?.Invoke(null);
+            Destroy(texture);
+        }
     }
 
     public void ActionSwitchType(string type)

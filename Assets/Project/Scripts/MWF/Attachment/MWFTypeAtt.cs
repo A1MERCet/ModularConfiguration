@@ -4,10 +4,10 @@ public class MWFTypeAtt: MWFTypeOBJ
 {
     public MWFRenderAtt RenderAtt => configRender as MWFRenderAtt;
     
-    public string slot
+    public string attachmentType
     {
-        get => JsonObject.Get<string>("slot");
-        set => SetValue("Slot", value);
+        get => JsonObject.Get<string>("attachmentType");
+        set => SetValue("attachmentType", value);
     }
     
     public override string GetConfigType() => "attachments";

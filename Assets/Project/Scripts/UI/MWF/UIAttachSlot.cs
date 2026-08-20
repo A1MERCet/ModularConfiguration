@@ -1,9 +1,12 @@
+using System;
+using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class UIAttachSlot : MonoBehaviour
 {
-    public string slotID;
+    public string attachType;
     public MWFTypeAtt installed;
     public RectTransform rect;
 
@@ -12,6 +15,9 @@ public class UIAttachSlot : MonoBehaviour
 
     public RawImage imageIcon;
     public Image imageLine;
+
+    public Action<UIAttachSlot> onSelect;
+    
     private void Start()
     {
         rect = GetComponent<RectTransform>();
@@ -19,8 +25,15 @@ public class UIAttachSlot : MonoBehaviour
 
     private void Update()
     {
-        textSlotID.text = slotID;
+        textSlotID.text = attachType;
         textInstalledAttach.text = installed?.DisplayName ?? "";
-        imageIcon.color = installed == null ? Color.clear : Color.white;
     }
+
+    public void UpdateIcon()
+    {
+        if (installed != null) UIMWFResource.instance.LoadIcon(imageIcon, Path.Combine(installed.package.iconPath, installed.GetConfigType(), $"{installed.InternalName}.png"));
+        else imageIcon.color = Color.clear;
+    }
+    
+    public void ActionSelect() => onSelect?.Invoke(this);
 }

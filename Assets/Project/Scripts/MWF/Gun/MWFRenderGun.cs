@@ -11,16 +11,58 @@ public class MWFRenderGun: MWFRenderGLB
 {
     [Serializable]
     [JsonObject(MemberSerialization.OptIn)]
+    public class AttachModify
+    {
+        [JsonProperty] public string binding;
+        [JsonProperty] public string[] hidePart;
+        [JsonProperty] public bool renderInsideSightModel;
+        [JsonProperty] public float renderInsideGunOffset;
+        [JsonProperty] public Vector3Seri sightAimPosOffset;
+        [JsonProperty] public Vector3Seri sightAimRotOffset;
+        [JsonProperty] public Vector3Seri translate;
+        [JsonProperty] public Vector3Seri scale;
+        [JsonProperty] public Vector3Seri rotate;
+        
+        public Vector3 SightAimPosOffset
+        {
+            get => UtilMC.Location2Vector(sightAimPosOffset.ToVector3());
+            set => sightAimPosOffset.FromVector3(UtilMC.Vector2Location(value));
+        }
+        public Vector3 SightAimRotOffset
+        {
+            get => UtilMC.Location2Vector(sightAimRotOffset.ToVector3());
+            set => sightAimRotOffset.FromVector3(UtilMC.Vector2Location(value));
+        }
+        public Vector3 Translate
+        {
+            get => UtilMC.Location2Vector(translate.ToVector3());
+            set => translate.FromVector3(UtilMC.Vector2Location(value));
+        }
+        public Vector3 Rotate
+        {
+            get => rotate.ToVector3();
+            set => rotate.FromVector3(value);
+        }
+        public Vector3 Scale
+        {
+            get => scale.ToVector3();
+            set => scale.FromVector3(value);
+        }
+    }
+    
+    [Serializable]
+    [JsonObject(MemberSerialization.OptIn)]
     public class AttachSlot
     {
+        [JsonProperty] public string[] hidePart;
         [JsonProperty] public Vector3Seri translate;
         [JsonProperty] public Vector3Seri scale;
         [JsonProperty] public Vector3Seri rotate;
 
         public Vector3 Translate
         {
-            get => translate.ToVector3();
-            set => translate.FromVector3(value);
+            get => UtilMC.Location2Vector(translate.ToVector3());
+            set => translate.FromVector3(UtilMC.Vector2Location(value));
         }
         public Vector3 Rotate
         {
@@ -36,6 +78,15 @@ public class MWFRenderGun: MWFRenderGLB
     
     private SerializableDic<string, AttachmentPose> attachmentPoses = new();
     public SerializableDic<string, AttachmentPose> AttachmentPoses => attachmentPoses;
+    
+    /**
+     * model
+     */
+    public string[] defaultHidePart
+    { 
+        get => JsonObject?.Get<string[]>("defaultHidePart", Array.Empty<string>()) ?? Array.Empty<string>();
+        set => SetValue("defaultHidePart", value);
+    }
     
     /**
      * general
@@ -91,6 +142,13 @@ public class MWFRenderGun: MWFRenderGLB
     public AttachSlot AttachmentGroup(string slot) => JsonObject?.Get<AttachSlot>($"attachmentGroup.{slot}") ?? new AttachSlot();
     public void AttachmentGroup(AttachSlot slot) => SetValue($"attachmentGroup.{slot}", slot);
     
+    public Dictionary<string, AttachModify> attachment
+    {
+        get => JsonObject?.Get<Dictionary<string, AttachModify>>("attachment") ?? new Dictionary<string, AttachModify>();
+        set => SetValue("attachment", value);
+    }
+    public AttachModify Attachment(string slot) => JsonObject?.Get<AttachModify>($"attachment.{slot}") ?? new AttachModify();
+    public void Attachment(AttachModify slot) => SetValue($"attachment.{slot}", slot);
     /**
      * global
      */

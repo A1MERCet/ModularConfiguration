@@ -7,6 +7,22 @@ using UnityEngine;
 
 public abstract class MWFRenderGLB: MWFRender
 {
+    private HashSet<string> skipMaterials = new ()
+    {
+        "overlayModel",
+        "scopeModel",
+        "overlaySolidModel",
+        "flashModel",
+        "leftArmModel",
+        "leftArmLayerModel",
+        "leftArmSlimModel",
+        "leftArmLayerSlimModel",
+        "rightArmModel",
+        "rightArmLayerModel",
+        "rightArmSlimModel",
+        "rightArmLayerSlimModel",
+    };
+    
     private Dictionary<string, GLBAnimationStage> animations = new();
     public Dictionary<string, GLBAnimationStage> Animations => animations;
 
@@ -28,7 +44,7 @@ public abstract class MWFRenderGLB: MWFRender
         TexturePBR texture = new TexturePBR() {
             baseColorPath = configType.modelSkins.Length == 0 ? "" : Path.Combine(configType.package.skinPath, GetConfigType(), $"{configType.modelSkins[0].skinAsset}.png")
         };
-        GLBSceneManager.instance.Load(Path.Combine(configType.package.glbPath, GetConfigType()), ModelFileName, texture, (scene) => {
+        GLBSceneManager.instance.Load(Path.Combine(configType.package.glbPath, GetConfigType()), ModelFileName, texture, skipMaterials, (scene) => {
             OnGLBLoaded(scene);
             onLoaded?.Invoke(scene);
         });

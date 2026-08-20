@@ -1,9 +1,26 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Dummiesman;
 using UnityEngine;
 
 public abstract class MWFRenderOBJ: MWFRender
 {
+    private HashSet<string> skipMaterials = new ()
+    {
+        "overlayModel",
+        "scopeModel",
+        "overlaySolidModel",
+        "flashModel",
+        "leftArmModel",
+        "leftArmLayerModel",
+        "leftArmSlimModel",
+        "leftArmLayerSlimModel",
+        "rightArmModel",
+        "rightArmLayerModel",
+        "rightArmSlimModel",
+        "rightArmLayerSlimModel",
+    };
+    
     public BehaviourMWF loadedOBJ;
     public override BehaviourMWF LoadedModel() => loadedOBJ;
 
@@ -22,6 +39,7 @@ public abstract class MWFRenderOBJ: MWFRender
         texture.onLoaded += () => {
             foreach (var mesh in obj.GetComponentsInChildren<MeshRenderer>())
             {
+                if (skipMaterials.Contains(mesh.name)) continue;
                 string originName = mesh.material?.name ?? null;
                 var material = new Material(Shader.Find("Universal Render Pipeline/Autodesk Interactive/AutodeskInteractive"));
                 material.name = originName ?? mesh.name;
@@ -35,7 +53,7 @@ public abstract class MWFRenderOBJ: MWFRender
             }
         };
         loadedOBJ = PostLoadOBJ(obj);
-        loadedOBJ.model = obj;
+        loadedOBJ.SetConfig(configType, obj);
         return loadedOBJ;
     }
     protected virtual BehaviourMWF PostLoadOBJ(GameObject o) => o.AddComponent<BehaviourMWF>();
